@@ -1,5 +1,10 @@
 body {
     padding-top: 2em;
+    padding-left: 15%;
+    padding-right: 15%;
+}
+
+div.external-links {
     text-align: center;
 }
 
@@ -8,7 +13,7 @@ div.image-container {
     display: inline-block;
 }
 
-img {
+div.image-container img {
     max-width: 200px;
     padding: 5px;
 }
@@ -20,4 +25,42 @@ img#farcaster-logo {
 img#github-logo {
     background-color: #000000;
     border-radius: 50%;
+}
+
+h1 {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+.presentation {
+    display: flex;
+}
+
+.presentation .thumbnail {
+    width: 50%;
+    display: inline-block;
+    text-align: center;
+    line-height: 200px;
+}
+
+.presentation .thumbnail img {
+    max-width: 400px;
+}
+
+.presentation .description {
+    width: 50%;
+    display: inline-block;
+    text-align: center;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.presentation .description h1 {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: x-large;
+    border-bottom: rgb(160, 160, 160);
+    border-width: 0 0 1px 0;
+    border-style: groove;
+}
+
+.presentation .description .download-link {
+    margin-top: 0.5em;
 }
