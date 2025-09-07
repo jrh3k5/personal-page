@@ -1,2 +1,5 @@
 # Ignore MacOS artifacts
 .DS_Store
+
+# Ignore the deployable artifacts
+dist

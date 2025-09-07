@@ -7,11 +7,21 @@ on:
     branches: [ main ]
 
 jobs:
+  build:
+    uses: ./.github/workflows/build.yml
+
   validate:
     runs-on: ubuntu-latest
+    needs: build
     
     steps:
     - uses: actions/checkout@v4
+    
+    - name: Download build artifacts
+      uses: actions/download-artifact@v4
+      with:
+        name: site-build
+        path: dist/
     
     - name: Install HTML validator
       run: |
@@ -21,7 +31,7 @@ jobs:
     - name: Validate HTML syntax
       run: |
         echo "Validating HTML files..."
-        for file in *.html; do
+        for file in dist/*.html; do
           if [ -f "$file" ]; then
             echo "Validating $file"
             tidy -q -e "$file" || exit 1
@@ -33,7 +43,7 @@ jobs:
         echo "Checking local resources..."
         
         # Extract all local image sources and CSS links from HTML files
-        for html_file in *.html; do
+        for html_file in dist/*.html; do
           if [ -f "$html_file" ]; then
             echo "Checking resources in $html_file"
             
@@ -41,6 +51,10 @@ jobs:
             grep -oP 'href=['"'"'"]([^'"'"'"http][^'"'"'"]*)' "$html_file" | sed 's/href=['"'"'"]//' | sed 's/['"'"'"]$//' | while read -r resource; do
               # Remove leading ./ if present
               resource=$(echo "$resource" | sed 's|^./||')
+              # Prepend dist/ if resource doesn't start with dist/
+              if [[ ! "$resource" =~ ^dist/ ]]; then
+                resource="dist/$resource"
+              fi
               if [ ! -f "$resource" ]; then
                 echo "ERROR: CSS file not found: $resource"
                 exit 1
@@ -53,6 +67,10 @@ jobs:
             grep -oP 'src=['"'"'"]([^'"'"'"http][^'"'"'"]*)' "$html_file" | sed 's/src=['"'"'"]//' | sed 's/['"'"'"]$//' | while read -r resource; do
               # Remove leading ./ if present
               resource=$(echo "$resource" | sed 's|^./||')
+              # Prepend dist/ if resource doesn't start with dist/
+              if [[ ! "$resource" =~ ^dist/ ]]; then
+                resource="dist/$resource"
+              fi
               if [ ! -f "$resource" ]; then
                 echo "ERROR: Image file not found: $resource"
                 exit 1
@@ -64,6 +82,10 @@ jobs:
             # Check for any other local resources (like PDFs, etc.)
             grep -oP 'href=['"'"'"]([^'"'"'"http][^'"'"'"]*)' "$html_file" | sed 's/href=['"'"'"]//' | sed 's/['"'"'"]$//' | grep -E '\.(pdf|doc|docx|txt|zip)$' | while read -r resource; do
               resource=$(echo "$resource" | sed 's|^./||')
+              # Prepend dist/ if resource doesn't start with dist/
+              if [[ ! "$resource" =~ ^dist/ ]]; then
+                resource="dist/$resource"
+              fi
               if [ ! -f "$resource" ]; then
                 echo "WARNING: Local document not found: $resource (external links are OK)"
               else
@@ -78,7 +100,7 @@ jobs:
         echo "Checking external links..."
         
         # Extract external URLs and test basic connectivity
-        for html_file in *.html; do
+        for html_file in dist/*.html; do
           if [ -f "$html_file" ]; then
             echo "Checking external links in $html_file"
             
