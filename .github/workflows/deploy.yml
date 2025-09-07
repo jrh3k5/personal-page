@@ -26,3 +26,4 @@ jobs:
           project-name: "jrh3k5.orbiter.website"
           build-dir: "./dist"
           api-key: ${{ secrets.ORBITER_API_KEY }}
+          skip-install: true # skips the installation of dependencies, which don't exist
