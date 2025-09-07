@@ -1,0 +1,96 @@
+name: Validate HTML and Resources
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Install HTML validator
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y tidy
+    
+    - name: Validate HTML syntax
+      run: |
+        echo "Validating HTML files..."
+        for file in *.html; do
+          if [ -f "$file" ]; then
+            echo "Validating $file"
+            tidy -q -e "$file" || exit 1
+          fi
+        done
+    
+    - name: Verify local resources exist
+      run: |
+        echo "Checking local resources..."
+        
+        # Extract all local image sources and CSS links from HTML files
+        for html_file in *.html; do
+          if [ -f "$html_file" ]; then
+            echo "Checking resources in $html_file"
+            
+            # Check CSS files
+            grep -oP 'href=['"'"'"]([^'"'"'"http][^'"'"'"]*)' "$html_file" | sed 's/href=['"'"'"]//' | sed 's/['"'"'"]$//' | while read -r resource; do
+              # Remove leading ./ if present
+              resource=$(echo "$resource" | sed 's|^./||')
+              if [ ! -f "$resource" ]; then
+                echo "ERROR: CSS file not found: $resource"
+                exit 1
+              else
+                echo "✓ Found CSS: $resource"
+              fi
+            done
+            
+            # Check image files
+            grep -oP 'src=['"'"'"]([^'"'"'"http][^'"'"'"]*)' "$html_file" | sed 's/src=['"'"'"]//' | sed 's/['"'"'"]$//' | while read -r resource; do
+              # Remove leading ./ if present
+              resource=$(echo "$resource" | sed 's|^./||')
+              if [ ! -f "$resource" ]; then
+                echo "ERROR: Image file not found: $resource"
+                exit 1
+              else
+                echo "✓ Found image: $resource"
+              fi
+            done
+            
+            # Check for any other local resources (like PDFs, etc.)
+            grep -oP 'href=['"'"'"]([^'"'"'"http][^'"'"'"]*)' "$html_file" | sed 's/href=['"'"'"]//' | sed 's/['"'"'"]$//' | grep -E '\.(pdf|doc|docx|txt|zip)$' | while read -r resource; do
+              resource=$(echo "$resource" | sed 's|^./||')
+              if [ ! -f "$resource" ]; then
+                echo "WARNING: Local document not found: $resource (external links are OK)"
+              else
+                echo "✓ Found document: $resource"
+              fi
+            done
+          fi
+        done
+    
+    - name: Verify external links accessibility (basic check)
+      run: |
+        echo "Checking external links..."
+        
+        # Extract external URLs and test basic connectivity
+        for html_file in *.html; do
+          if [ -f "$html_file" ]; then
+            echo "Checking external links in $html_file"
+            
+            # Check external links (http/https)
+            grep -oP 'href=['"'"'"]https?://[^'"'"'"]*' "$html_file" | sed 's/href=['"'"'"]//' | sed 's/['"'"'"]$//' | while read -r url; do
+              echo "Checking external URL: $url"
+              if curl -sSf --max-time 10 -I "$url" > /dev/null 2>&1; then
+                echo "✓ External link accessible: $url"
+              else
+                echo "WARNING: External link may be inaccessible: $url"
+                # Don't fail the build for external link issues, just warn
+              fi
+            done
+          fi
+        done
