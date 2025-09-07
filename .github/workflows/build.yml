@@ -1,0 +1,21 @@
+name: Build Site
+
+on:
+  workflow_call:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Build site
+        run: |
+          mkdir -p ./dist
+          cp ./src/* ./dist
+      
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-build
+          path: dist/
