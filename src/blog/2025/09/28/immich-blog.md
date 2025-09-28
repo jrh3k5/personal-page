@@ -1,4 +1,4 @@
-# How and Why I Set up Immich, a Google Photos Replacement
+# How and Why I Set up Immich, a Self-Hosted Open-Source Google Photos Replacement
 
 Have you heard of [Immich](https://immich.app/)? I hadn't, until recently: it's an open-source, self-hosted photo site with support for context searching (search for "dog" to find photos of dogs), facial recognition, and indexing of locations and date to make photos and movies searchable by those details.
 
