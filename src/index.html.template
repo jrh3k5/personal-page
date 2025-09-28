@@ -18,11 +18,17 @@
       </div>
     </div>
     <div>
+      <h1>Recent Blog Posts</h1>
+      <div class="recent-blogs">
+        {{RECENT_BLOGS}}
+      </div>
+      <div class="blog-link">
+        <a href="blog/index.html">📝 View All Blog Posts</a>
+      </div>
+    </div>
+    <div>
       <h1>Presentations</h1>
       {{PRESENTATIONS}}
-    </div>
-    <div class="blog-link">
-      <a href="blog/index.html">📝 View Blog</a>
     </div>
   </body>
 </html>

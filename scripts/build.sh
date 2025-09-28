@@ -19,7 +19,7 @@ fi
 
 # Generate index.html from template and presentations data
 echo "Generating index.html from template..."
-python3 ./scripts/generate_html_simple.py ./src/presentations.yaml ./src/index.html.template ./dist/index.html
+python3 ./scripts/generate_main_page.py ./src/presentations.yaml ./src/index.html.template ./dist/index.html
 
 # Process blog content if it exists
 if [ -d "./src/blog" ] && [ "$(find ./src/blog -name '*.md' | wc -l)" -gt 0 ]; then
