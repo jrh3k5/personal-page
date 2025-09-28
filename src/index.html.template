@@ -8,12 +8,12 @@
     <div class="external-links">
       <div class="image-container">
         <a href="https://warpcast.com/jrh3k5.eth">
-            <img id="farcaster-logo" src="./farcaster-purple-white.png" alt="Farcaster (via Warpcast)" />
+            <img id="farcaster-logo" src="./images/farcaster-purple-white.png" alt="Farcaster (via Warpcast)" />
         </a>
       </div>
       <div class="image-container">
         <a href="https://github.com/jrh3k5">
-            <img id="github-logo" src="./github-mark-white.png" alt="GitHub" />
+            <img id="github-logo" src="./images/github-mark-white.png" alt="GitHub" />
         </a>
       </div>
     </div>
