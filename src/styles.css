@@ -344,6 +344,33 @@ h1 {
   text-decoration: underline;
 }
 
+/* Blog Footer */
+.blog-footer {
+  text-align: center;
+  margin: 40px 20px 20px 20px;
+  padding: 20px;
+  border-top: 1px solid #e5e7eb;
+  background: #f9fafb;
+  border-radius: 8px;
+}
+
+.blog-footer p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 0.9em;
+}
+
+.blog-footer a {
+  color: #7c3aed;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.blog-footer a:hover {
+  color: #5b21b6;
+  text-decoration: underline;
+}
+
 /* Responsive Adjustments */
 @media (max-width: 768px) {
   .presentation {

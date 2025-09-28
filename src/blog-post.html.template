@@ -29,6 +29,9 @@
     <article class="blog-post">
       {{CONTENT}}
     </article>
+    <div class="blog-footer">
+      <p>Found an issue with this post or have feedback? <a href="https://github.com/jrh3k5/personal-page/issues" target="_blank" rel="noopener noreferrer">Report an issue on GitHub</a></p>
+    </div>
     <div class="blog-navigation">
       <a href="{{HOME_PATH}}">← Home</a> | <a href="{{BLOG_INDEX_PATH}}">← Blog Index</a>
     </div>
