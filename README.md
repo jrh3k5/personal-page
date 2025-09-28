@@ -47,8 +47,9 @@ A simple static website showcasing presentations and providing links to social p
 
 The build process:
 1. Processes the HTML template (`index.html.template`) with presentation data from `presentations.yaml`
-2. Generates the final `index.html` in the `dist/` directory
-3. Copies all static assets (CSS, images, blog content) to `dist/`
+2. Converts Markdown blog posts to HTML and generates a blog index page
+3. Generates the final `index.html` and blog pages in the `dist/` directory
+4. Copies all static assets (CSS, images) to `dist/`
 
 ### Build Output
 
@@ -66,6 +67,20 @@ The site uses a template-based build system for maintainability:
 
 1. Edit `src/presentations.yaml` to add or modify presentation data
 2. Run `./scripts/build.sh` to regenerate the site
+
+### Adding/Editing Blog Posts
+
+1. Create Markdown files in `src/blog/` following the directory structure `YYYY/MM/DD/post-name.md`
+2. Write your blog post in Markdown format
+3. Run `./scripts/build.sh` to convert Markdown to HTML and update the blog index
+4. Blog posts are automatically sorted by date (newest first) on the index page
+
+Blog posts support:
+- Headers (# ## ###)
+- Links [text](url)
+- Bold **text** and italic *text*
+- Code blocks ``` and inline `code`
+- Bullet point lists
 
 ### Modifying the Layout
 

@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{TITLE}} - Blog</title>
+    <link rel="stylesheet" href="{{CSS_PATH}}">
+  </head>
+  <body>
+    <div class="blog-navigation">
+      <a href="{{HOME_PATH}}">← Home</a> | <a href="{{BLOG_INDEX_PATH}}">← Blog Index</a>
+    </div>
+    <article class="blog-post">
+      {{CONTENT}}
+    </article>
+    <div class="blog-navigation">
+      <a href="{{HOME_PATH}}">← Home</a> | <a href="{{BLOG_INDEX_PATH}}">← Blog Index</a>
+    </div>
+  </body>
+</html>

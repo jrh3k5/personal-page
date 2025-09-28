@@ -21,5 +21,8 @@
       <h1>Presentations</h1>
       {{PRESENTATIONS}}
     </div>
+    <div class="blog-link">
+      <a href="blog/index.html">📝 View Blog</a>
+    </div>
   </body>
 </html>
