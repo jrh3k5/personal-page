@@ -1,0 +1,10 @@
+# Metadata for the Immich blog post
+
+# Blog post thumbnail (used in index pages and social sharing)
+thumbnail:
+  image: "images/immich_logo.svg"
+  alt: "Immich logo"
+
+# SEO metadata
+seo:
+  keywords: ["immich", "self-hosted", "photography", "google-photos", "raspberry-pi", "docker"]

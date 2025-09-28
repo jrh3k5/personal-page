@@ -17,9 +17,10 @@ A simple static website showcasing presentations and providing links to social p
 │   │   └── presentations.yaml    # Presentation data in YAML format
 │   └── blog/                     # Blog content (Markdown files)
 ├── scripts/                      # Build and deployment scripts
-│   ├── build.sh                 # Main build script
-│   ├── generate_html_simple.py  # Template processor (no external deps)
-│   └── generate_html.py         # Template processor (requires PyYAML)
+│   ├── build.sh                 # Main build script (calls Node.js)
+│   ├── build.js                 # Node.js build orchestrator
+│   ├── process-blog.js          # Blog processing (Markdown to HTML)
+│   └── generate-main-page.js    # Main page generation
 ├── .github/workflows/           # GitHub Actions workflows
 ├── dist/                        # Built website output
 └── README.md                   # This file
@@ -30,8 +31,8 @@ A simple static website showcasing presentations and providing links to social p
 ### Prerequisites
 
 - Bash shell
-- Python 3 (for template processing)
-- Basic file system operations (cp, mkdir)
+- Node.js (version 16 or higher)
+- npm (comes with Node.js)
 
 ### Build Instructions
 
@@ -40,10 +41,12 @@ A simple static website showcasing presentations and providing links to social p
 ```
 
 The build process:
-1. Processes the HTML template (`index.html.template`) with presentation data from `presentations.yaml`
-2. Converts Markdown blog posts to HTML and generates a blog index page
-3. Generates the final `index.html` and blog pages in the `dist/` directory
-4. Copies all static assets (CSS, images) to `dist/`
+1. Installs dependencies automatically if needed (`npm install`)
+2. Processes the HTML template (`index.html.template`) with presentation data from `presentations.yaml`
+3. Converts Markdown blog posts to HTML with full metadata support
+4. Generates blog index pages with thumbnails and social media metadata
+5. Creates the final `index.html` and blog pages in the `dist/` directory
+6. Copies all static assets (CSS, images) to `dist/`
 
 ### Build Output
 
