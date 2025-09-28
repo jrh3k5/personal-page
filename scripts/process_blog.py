@@ -82,6 +82,8 @@ def markdown_to_html(content):
 
 def extract_metadata(content):
     """Extract title and other metadata from markdown content."""
+    import html
+
     lines = content.split('\n')
     title = None
     summary = None
@@ -99,12 +101,17 @@ def extract_metadata(content):
             clean_line = re.sub(r'\[([^\]]+)\]\([^)]+\)', r'\1', line)
             clean_line = re.sub(r'\*\*(.*?)\*\*', r'\1', clean_line)
             clean_line = re.sub(r'\*(.*?)\*', r'\1', clean_line)
+            clean_line = re.sub(r'`([^`]+)`', r'\1', clean_line)  # Remove inline code formatting
             summary = clean_line.strip()[:200] + '...' if len(clean_line) > 200 else clean_line.strip()
             break
 
+    # HTML escape the summary for use in meta attributes
+    safe_summary = html.escape(summary or 'No summary available.')
+    safe_title = html.escape(title or 'Untitled')
+
     return {
-        'title': title or 'Untitled',
-        'summary': summary or 'No summary available.'
+        'title': safe_title,
+        'summary': safe_summary
     }
 
 def process_blog_file(file_path, output_dir, blog_template):
@@ -131,12 +138,30 @@ def process_blog_file(file_path, output_dir, blog_template):
     home_path = '../' * (path_depth + 1) + 'index.html'
     blog_index_path = '../' * path_depth + 'index.html' if path_depth > 0 else 'index.html'
 
+    # Extract date from path for metadata
+    path_parts = rel_path.split('/')
+    if len(path_parts) >= 3:
+        try:
+            year, month, day = path_parts[0], path_parts[1], path_parts[2]
+            date_str = f"{year}-{month}-{day}"
+            published_date = f"{date_str}T00:00:00Z"  # ISO 8601 format
+        except:
+            published_date = "2025-01-01T00:00:00Z"
+    else:
+        published_date = "2025-01-01T00:00:00Z"
+
+    # Generate blog URL (relative to site root)
+    blog_url = f"blog/{rel_path.replace('.md', '.html')}"
+
     # Generate HTML from template
     final_html = blog_template.replace('{{TITLE}}', metadata['title'])
     final_html = final_html.replace('{{CONTENT}}', html_content)
     final_html = final_html.replace('{{CSS_PATH}}', css_path)
     final_html = final_html.replace('{{HOME_PATH}}', home_path)
     final_html = final_html.replace('{{BLOG_INDEX_PATH}}', blog_index_path)
+    final_html = final_html.replace('{{SUMMARY}}', metadata['summary'])
+    final_html = final_html.replace('{{PUBLISHED_DATE}}', published_date)
+    final_html = final_html.replace('{{BLOG_URL}}', blog_url)
 
     # Write output
     with open(output_path, 'w', encoding='utf-8') as f:
