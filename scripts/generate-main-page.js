@@ -11,13 +11,8 @@ function loadSiteConfig() {
   const configPath = path.join(__dirname, '..', 'src', 'config.yml');
 
   if (fs.existsSync(configPath)) {
-    try {
-      const content = fs.readFileSync(configPath, 'utf8');
-      return yaml.load(content) || {};
-    } catch (error) {
-      console.warn(`Warning: Could not load site config from ${configPath}: ${error.message}`);
-      return {};
-    }
+    const content = fs.readFileSync(configPath, 'utf8');
+    return yaml.load(content) || {};
   }
 
   return {};
@@ -31,13 +26,8 @@ function loadIndexMetadata(templateFile) {
   const metaPath = `${basePath}.meta.yaml`;
 
   if (fs.existsSync(metaPath)) {
-    try {
-      const content = fs.readFileSync(metaPath, 'utf8');
-      return yaml.load(content) || {};
-    } catch (error) {
-      console.warn(`Warning: Could not load metadata from ${metaPath}: ${error.message}`);
-      return {};
-    }
+    const content = fs.readFileSync(metaPath, 'utf8');
+    return yaml.load(content) || {};
   }
 
   return {};
