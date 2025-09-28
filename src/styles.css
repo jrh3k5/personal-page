@@ -216,6 +216,25 @@ h1 {
   padding-left: 0.5rem;
 }
 
+.blog-post h4 {
+  color: #4b5563;
+  margin-top: 20px;
+  border-left: 2px solid #a855f7;
+  padding-left: 0.5rem;
+}
+
+.blog-post h5 {
+  color: #6b7280;
+  margin-top: 15px;
+  font-size: 1.1rem;
+}
+
+.blog-post h6 {
+  color: #9ca3af;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+
 .blog-post p {
   margin-bottom: 15px;
   color: #4b5563;
@@ -227,6 +246,7 @@ h1 {
   border-radius: 8px;
   overflow-x: auto;
   border-left: 4px solid #7c3aed;
+  line-height: 1.4;
 }
 
 .blog-post code {
@@ -240,6 +260,7 @@ h1 {
 .blog-post pre code {
   background: none;
   padding: 0;
+  line-height: 1.4;
 }
 
 .blog-post ul {

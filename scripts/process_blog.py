@@ -9,7 +9,20 @@ from datetime import datetime
 def markdown_to_html(content):
     """Convert markdown to HTML using simple regex patterns."""
 
-    # Convert headers (# ## ###)
+    # First, temporarily replace code blocks with placeholders to avoid processing them
+    code_blocks = []
+    code_block_pattern = r'```\n(.*?)\n```'
+
+    def replace_code_block(match):
+        code_blocks.append(f'<pre><code>{match.group(1)}</code></pre>')
+        return f'CODEBLOCK_{len(code_blocks)-1}_PLACEHOLDER'
+
+    content = re.sub(code_block_pattern, replace_code_block, content, flags=re.DOTALL)
+
+    # Convert headers (# ## ### #### ##### ######)
+    content = re.sub(r'^###### (.*?)$', r'<h6>\1</h6>', content, flags=re.MULTILINE)
+    content = re.sub(r'^##### (.*?)$', r'<h5>\1</h5>', content, flags=re.MULTILINE)
+    content = re.sub(r'^#### (.*?)$', r'<h4>\1</h4>', content, flags=re.MULTILINE)
     content = re.sub(r'^### (.*?)$', r'<h3>\1</h3>', content, flags=re.MULTILINE)
     content = re.sub(r'^## (.*?)$', r'<h2>\1</h2>', content, flags=re.MULTILINE)
     content = re.sub(r'^# (.*?)$', r'<h1>\1</h1>', content, flags=re.MULTILINE)
@@ -23,19 +36,22 @@ def markdown_to_html(content):
     # Convert italic *text*
     content = re.sub(r'\*(.*?)\*', r'<em>\1</em>', content)
 
-    # Convert code blocks ```
-    content = re.sub(r'```\n(.*?)\n```', r'<pre><code>\1</code></pre>', content, flags=re.DOTALL)
-
     # Convert inline code `code`
     content = re.sub(r'`([^`]+)`', r'<code>\1</code>', content)
 
-    # Convert bullet points
+    # Convert bullet points and paragraphs
     lines = content.split('\n')
     html_lines = []
     in_list = False
 
     for line in lines:
-        if line.strip().startswith('* '):
+        # Skip lines that are code block placeholders
+        if 'CODEBLOCK_' in line and '_PLACEHOLDER' in line:
+            if in_list:
+                html_lines.append('</ul>')
+                in_list = False
+            html_lines.append(line)  # Will be replaced later
+        elif line.strip().startswith('* '):
             if not in_list:
                 html_lines.append('<ul>')
                 in_list = True
@@ -45,14 +61,24 @@ def markdown_to_html(content):
                 html_lines.append('</ul>')
                 in_list = False
             if line.strip():
-                html_lines.append(f'<p>{line}</p>')
+                # Don't wrap headers in <p> tags
+                if not (line.strip().startswith('<h') and line.strip().endswith('>')):
+                    html_lines.append(f'<p>{line}</p>')
+                else:
+                    html_lines.append(line)
             else:
                 html_lines.append('')
 
     if in_list:
         html_lines.append('</ul>')
 
-    return '\n'.join(html_lines)
+    content = '\n'.join(html_lines)
+
+    # Restore code blocks
+    for i, code_block in enumerate(code_blocks):
+        content = content.replace(f'CODEBLOCK_{i}_PLACEHOLDER', code_block)
+
+    return content
 
 def extract_metadata(content):
     """Extract title and other metadata from markdown content."""
