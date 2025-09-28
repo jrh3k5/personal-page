@@ -6,6 +6,20 @@ const yaml = require('js-yaml');
 const { marked } = require('marked');
 
 /**
+ * Load site configuration
+ */
+function loadSiteConfig() {
+  const configPath = path.join(__dirname, '..', 'src', 'config.yml');
+
+  if (fs.existsSync(configPath)) {
+    const content = fs.readFileSync(configPath, 'utf8');
+    return yaml.load(content) || {};
+  }
+
+  return {};
+}
+
+/**
  * Load metadata from a .meta.yaml file if it exists
  */
 function loadBlogMetadata(filePath) {
@@ -13,13 +27,8 @@ function loadBlogMetadata(filePath) {
   const metaPath = `${basePath}.meta.yaml`;
 
   if (fs.existsSync(metaPath)) {
-    try {
-      const content = fs.readFileSync(metaPath, 'utf8');
-      return yaml.load(content) || {};
-    } catch (error) {
-      console.warn(`Warning: Could not load metadata from ${metaPath}: ${error.message}`);
-      return {};
-    }
+    const content = fs.readFileSync(metaPath, 'utf8');
+    return yaml.load(content) || {};
   }
 
   return {};
@@ -132,6 +141,9 @@ function extractMetadata(content, filePath = null) {
 function processBlogFile(filePath, outputDir, blogTemplate) {
   const content = fs.readFileSync(filePath, 'utf8');
 
+  // Load site configuration
+  const siteConfig = loadSiteConfig();
+
   // Extract metadata
   const metadata = extractMetadata(content, filePath);
 
@@ -181,12 +193,23 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const ogType = externalMeta.og?.type || 'article';
   let ogImageMeta = '';
 
+  // Helper function to convert relative URLs to absolute
+  function makeAbsoluteUrl(relativeUrl) {
+    if (!relativeUrl) return relativeUrl;
+    if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) {
+      return relativeUrl;
+    }
+    const baseUrl = siteConfig.site?.base_url || '';
+    return baseUrl ? `${baseUrl}/${relativeUrl}` : relativeUrl;
+  }
+
   // Use OpenGraph image, or fall back to thumbnail image
   const ogImage = externalMeta.og?.image || externalMeta.thumbnail?.image;
   const ogImageAlt = externalMeta.og?.image_alt || externalMeta.thumbnail?.alt;
 
   if (ogImage) {
-    ogImageMeta = `\n    <meta property="og:image" content="${ogImage}">`;
+    const absoluteOgImage = makeAbsoluteUrl(ogImage);
+    ogImageMeta = `\n    <meta property="og:image" content="${absoluteOgImage}">`;
     if (ogImageAlt) {
       ogImageMeta += `\n    <meta property="og:image:alt" content="${ogImageAlt}">`;
     }
@@ -200,7 +223,8 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const twitterImage = externalMeta.twitter?.image || ogImage;
 
   if (twitterImage) {
-    twitterImageMeta = `\n    <meta name="twitter:image" content="${twitterImage}">`;
+    const absoluteTwitterImage = makeAbsoluteUrl(twitterImage);
+    twitterImageMeta = `\n    <meta name="twitter:image" content="${absoluteTwitterImage}">`;
   }
 
   // Generate SEO keywords metadata

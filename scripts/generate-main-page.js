@@ -5,6 +5,99 @@ const path = require('path');
 const yaml = require('js-yaml');
 
 /**
+ * Load site configuration
+ */
+function loadSiteConfig() {
+  const configPath = path.join(__dirname, '..', 'src', 'config.yml');
+
+  if (fs.existsSync(configPath)) {
+    const content = fs.readFileSync(configPath, 'utf8');
+    return yaml.load(content) || {};
+  }
+
+  return {};
+}
+
+/**
+ * Load index page metadata
+ */
+function loadIndexMetadata(templateFile) {
+  const basePath = path.parse(templateFile).dir + '/' + path.parse(templateFile).name;
+  const metaPath = `${basePath}.meta.yaml`;
+
+  if (fs.existsSync(metaPath)) {
+    const content = fs.readFileSync(metaPath, 'utf8');
+    return yaml.load(content) || {};
+  }
+
+  return {};
+}
+
+/**
+ * Generate social media meta tags
+ */
+function generateSocialMetaTags(metadata, siteConfig) {
+  // Helper function to convert relative URLs to absolute
+  function makeAbsoluteUrl(relativeUrl) {
+    if (!relativeUrl) return relativeUrl;
+    if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) {
+      return relativeUrl;
+    }
+    const baseUrl = siteConfig.site?.base_url || '';
+    return baseUrl ? `${baseUrl}/${relativeUrl}` : relativeUrl;
+  }
+
+  const title = metadata.title || 'Personal Site';
+  const description = metadata.description || '';
+  const ogType = metadata.og?.type || 'website';
+  const twitterCardType = metadata.twitter?.card || 'summary_large_image';
+  const siteName = metadata.og?.site_name || title;
+  const ogUrl = metadata.og?.url || makeAbsoluteUrl('');
+
+  // Generate image meta tags
+  const ogImage = metadata.og?.image || metadata.thumbnail?.image;
+  const ogImageAlt = metadata.og?.image_alt || metadata.thumbnail?.alt;
+  const twitterImage = metadata.twitter?.image || ogImage;
+
+  let metaTags = `
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="${description}">
+
+    <!-- OpenGraph metadata -->
+    <meta property="og:title" content="${title}">
+    <meta property="og:description" content="${description}">
+    <meta property="og:type" content="${ogType}">
+    <meta property="og:url" content="${ogUrl}">
+    <meta property="og:site_name" content="${siteName}">`;
+
+  if (ogImage) {
+    const absoluteOgImage = makeAbsoluteUrl(ogImage);
+    metaTags += `
+    <meta property="og:image" content="${absoluteOgImage}">`;
+    if (ogImageAlt) {
+      metaTags += `
+    <meta property="og:image:alt" content="${ogImageAlt}">`;
+    }
+  }
+
+  metaTags += `
+
+    <!-- Twitter Card metadata -->
+    <meta name="twitter:card" content="${twitterCardType}">
+    <meta name="twitter:title" content="${title}">
+    <meta name="twitter:description" content="${description}">`;
+
+  if (twitterImage) {
+    const absoluteTwitterImage = makeAbsoluteUrl(twitterImage);
+    metaTags += `
+    <meta name="twitter:image" content="${absoluteTwitterImage}">`;
+  }
+
+  return metaTags;
+}
+
+/**
  * Parse presentations YAML file
  */
 function parseYaml(content) {
@@ -234,6 +327,10 @@ function main() {
     process.exit(1);
   }
 
+  // Load site configuration and metadata
+  const siteConfig = loadSiteConfig();
+  const indexMetadata = loadIndexMetadata(templateFile);
+
   // Parse YAML and generate presentations HTML
   const presentations = parseYaml(yamlContent);
   const presentationsHtml = generatePresentationHtml(presentations);
@@ -242,10 +339,16 @@ function main() {
   const recentPosts = getRecentBlogPosts(5);
   const recentBlogsHtml = generateRecentBlogsHtml(recentPosts);
 
+  // Generate social media meta tags
+  const socialMetaTags = generateSocialMetaTags(indexMetadata, siteConfig);
+  const pageTitle = indexMetadata.title || 'Personal Site';
+
   // Replace placeholders in template
   let outputHtml = template
     .replace(/\{\{PRESENTATIONS\}\}/g, presentationsHtml)
-    .replace(/\{\{RECENT_BLOGS\}\}/g, recentBlogsHtml);
+    .replace(/\{\{RECENT_BLOGS\}\}/g, recentBlogsHtml)
+    .replace(/\{\{SOCIAL_META_TAGS\}\}/g, socialMetaTags)
+    .replace(/\{\{PAGE_TITLE\}\}/g, pageTitle);
 
   // Write output
   try {
