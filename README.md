@@ -5,16 +5,19 @@ A simple static website showcasing presentations and providing links to social p
 ## Project Structure
 
 ```
-├── src/                    # Source files for the website
-│   ├── index.html         # Main HTML page
-│   ├── styles.css         # CSS styling
-│   ├── blog/              # Blog content (Markdown files)
-│   └── *.png              # Images and icons
-├── scripts/               # Build and deployment scripts
-│   └── build.sh          # Main build script
-├── .github/workflows/     # GitHub Actions workflows
-├── dist/                  # Built website output
-└── README.md             # This file
+├── src/                           # Source files for the website
+│   ├── index.html.template       # HTML template with placeholders
+│   ├── presentations.yaml        # Presentation data in YAML format
+│   ├── styles.css                # CSS styling
+│   ├── blog/                     # Blog content (Markdown files)
+│   └── *.png                     # Images and icons
+├── scripts/                      # Build and deployment scripts
+│   ├── build.sh                 # Main build script
+│   ├── generate_html_simple.py  # Template processor (no external deps)
+│   └── generate_html.py         # Template processor (requires PyYAML)
+├── .github/workflows/           # GitHub Actions workflows
+├── dist/                        # Built website output
+└── README.md                   # This file
 ```
 
 ## Building the Site
@@ -22,6 +25,7 @@ A simple static website showcasing presentations and providing links to social p
 ### Prerequisites
 
 - Bash shell
+- Python 3 (for template processing)
 - Basic file system operations (cp, mkdir)
 
 ### Build Instructions
@@ -31,13 +35,19 @@ A simple static website showcasing presentations and providing links to social p
    ./scripts/build.sh
    ```
 
-2. **Manual build:**
+2. **Manual build process:**
    ```bash
    mkdir -p ./dist
-   cp ./src/* ./dist
+   python3 ./scripts/generate_html_simple.py ./src/presentations.yaml ./src/index.html.template ./dist/index.html
+   # Copy static files (excluding template and yaml files)
+   cp ./src/*.css ./src/*.png ./dist/
+   cp -r ./src/blog ./dist/ 2>/dev/null || true
    ```
 
-The build process copies all source files from `src/` to the `dist/` directory, which can then be served by any static web server.
+The build process:
+1. Processes the HTML template (`index.html.template`) with presentation data from `presentations.yaml`
+2. Generates the final `index.html` in the `dist/` directory
+3. Copies all static assets (CSS, images, blog content) to `dist/`
 
 ### Build Output
 
@@ -49,11 +59,26 @@ After building, the `dist/` directory will contain:
 
 ## Development
 
-The site is a simple static HTML/CSS website. To make changes:
+The site uses a template-based build system for maintainability:
 
-1. Edit files in the `src/` directory
-2. Run the build script to update `dist/`
-3. Serve the `dist/` directory with any static web server for testing
+### Adding/Editing Presentations
+
+1. Edit `src/presentations.yaml` to add or modify presentation data
+2. Run `./scripts/build.sh` to regenerate the site
+
+### Modifying the Layout
+
+1. Edit `src/index.html.template` to change the HTML structure
+2. Use `{{PRESENTATIONS}}` as a placeholder where presentation content should be inserted
+3. Run `./scripts/build.sh` to regenerate the site
+
+### Other Changes
+
+1. Edit CSS in `src/styles.css`
+2. Add/modify images in `src/`
+3. Edit blog content in `src/blog/`
+4. Run `./scripts/build.sh` to update `dist/`
+5. Serve the `dist/` directory with any static web server for testing
 
 ## Deployment
 

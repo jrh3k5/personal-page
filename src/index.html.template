@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Hello, World</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="external-links">
+      <div class="image-container">
+        <a href="https://warpcast.com/jrh3k5.eth">
+            <img id="farcaster-logo" src="./farcaster-purple-white.png" alt="Farcaster (via Warpcast)" />
+        </a>
+      </div>
+      <div class="image-container">
+        <a href="https://github.com/jrh3k5">
+            <img id="github-logo" src="./github-mark-white.png" alt="GitHub" />
+        </a>
+      </div>
+    </div>
+    <div>
+      <h1>Presentations</h1>
+      {{PRESENTATIONS}}
+    </div>
+  </body>
+</html>
