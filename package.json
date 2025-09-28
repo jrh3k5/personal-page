@@ -4,8 +4,7 @@
   "description": "Static website showcasing presentations and blog posts",
   "main": "scripts/build.js",
   "scripts": {
-    "build": "node scripts/build.js",
-    "dev": "npm run build && python3 -m http.server 8000 --directory dist"
+    "build": "node scripts/build.js"
   },
   "dependencies": {
     "js-yaml": "^4.1.0",
