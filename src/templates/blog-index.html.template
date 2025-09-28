@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Blog - Personal Page</title>
+    <link rel="stylesheet" href="../styles.css">
+  </head>
+  <body>
+    <div class="blog-navigation">
+      <a href="../index.html">← Home</a>
+    </div>
+    <div class="blog-container">
+      <header class="blog-header">
+        <h1>Blog</h1>
+      </header>
+      <main>
+        {{BLOG_POSTS}}
+      </main>
+    </div>
+    <div class="blog-navigation">
+      <a href="../index.html">← Home</a>
+    </div>
+  </body>
+</html>
