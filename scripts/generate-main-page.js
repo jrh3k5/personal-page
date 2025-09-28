@@ -22,8 +22,10 @@ function loadSiteConfig() {
  * Load index page metadata
  */
 function loadIndexMetadata(templateFile) {
-  const basePath = path.parse(templateFile).dir + '/' + path.parse(templateFile).name;
-  const metaPath = `${basePath}.meta.yaml`;
+  const parsed = path.parse(templateFile);
+  // Remove .html extension to get the base name (index.html -> index)
+  const baseName = parsed.name.replace('.html', '');
+  const metaPath = path.join(parsed.dir, `${baseName}.meta.yaml`);
 
   if (fs.existsSync(metaPath)) {
     const content = fs.readFileSync(metaPath, 'utf8');
