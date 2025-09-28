@@ -203,6 +203,13 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
     twitterImageMeta = `\n    <meta name="twitter:image" content="${twitterImage}">`;
   }
 
+  // Generate SEO keywords metadata
+  let keywordsMeta = '';
+  const keywords = externalMeta.seo?.keywords;
+  if (keywords && Array.isArray(keywords) && keywords.length > 0) {
+    keywordsMeta = `\n    <meta name="keywords" content="${keywords.join(', ')}">`;
+  }
+
   // Generate HTML from template
   let finalHtml = blogTemplate
     .replace(/\{\{TITLE\}\}/g, metadata.title)
@@ -217,7 +224,8 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
     .replace(/\{\{OG_TYPE\}\}/g, ogType)
     .replace(/\{\{OG_IMAGE_META\}\}/g, ogImageMeta)
     .replace(/\{\{TWITTER_CARD_TYPE\}\}/g, twitterCardType)
-    .replace(/\{\{TWITTER_IMAGE_META\}\}/g, twitterImageMeta);
+    .replace(/\{\{TWITTER_IMAGE_META\}\}/g, twitterImageMeta)
+    .replace(/\{\{KEYWORDS_META\}\}/g, keywordsMeta);
 
   // Write output
   fs.writeFileSync(outputPath, finalHtml);

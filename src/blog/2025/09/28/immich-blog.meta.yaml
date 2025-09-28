@@ -8,9 +8,3 @@ thumbnail:
 # SEO metadata
 seo:
   keywords: ["immich", "self-hosted", "photography", "google-photos", "raspberry-pi", "docker"]
-
-# Custom metadata
-custom:
-  reading_time: "12 min read"
-  difficulty: "intermediate"
-  tags: ["docker", "raspberry-pi", "self-hosting", "privacy"]
