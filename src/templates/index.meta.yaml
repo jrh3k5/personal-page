@@ -1,0 +1,14 @@
+# Metadata for the main index page
+
+# Page information
+title: "Joshua Hyde - Hello, World"
+description: "Personal portfolio and blog by Joshua Hyde featuring software engineering projects, presentations, and technical articles."
+
+# Social media thumbnail
+thumbnail:
+  image: "images/profile_social_1200x630.jpg"
+  alt: "Joshua Hyde profile photo"
+
+# OpenGraph metadata (will fall back to root-level title/description)
+og:
+  type: "website"
