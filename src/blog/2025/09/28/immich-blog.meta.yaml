@@ -2,8 +2,12 @@
 
 # Blog post thumbnail (used in index pages and social sharing)
 thumbnail:
-  image: "images/immich_logo_1200x630.png"
+  image: "images/immich_logo_1200x1200.png"
   alt: "Immich logo"
+
+# OpenGraph metadata (uses rectangular image for better social media display)
+og:
+  image: "images/immich_logo_1200x630.png"
 
 # SEO metadata
 seo:
