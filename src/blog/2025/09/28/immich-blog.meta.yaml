@@ -2,7 +2,7 @@
 
 # Blog post thumbnail (used in index pages and social sharing)
 thumbnail:
-  image: "images/immich_logo.svg"
+  image: "images/immich_logo_1200x630.png"
   alt: "Immich logo"
 
 # SEO metadata

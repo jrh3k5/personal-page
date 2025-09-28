@@ -1,7 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Hello, World</title>
+    <title>Joshua Hyde - Hello, World</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personal portfolio and blog by Joshua Hyde featuring software engineering projects, presentations, and technical articles.">
+
+    <!-- OpenGraph metadata -->
+    <meta property="og:title" content="Joshua Hyde - Hello, World">
+    <meta property="og:description" content="Personal portfolio and blog by Joshua Hyde featuring software engineering projects, presentations, and technical articles.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jrh3k5.orbiter.website/">
+    <meta property="og:site_name" content="Joshua Hyde">
+    <meta property="og:image" content="https://jrh3k5.orbiter.website/images/immich_logo_1200x630.png">
+    <meta property="og:image:alt" content="Joshua Hyde portfolio site">
+
+    <!-- Twitter Card metadata -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Joshua Hyde - Hello World">
+    <meta name="twitter:description" content="Personal portfolio and blog by Joshua Hyde featuring software engineering projects, presentations, and technical articles.">
+    <meta name="twitter:image" content="https://jrh3k5.orbiter.website/images/immich_logo_1200x630.png">
+
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>

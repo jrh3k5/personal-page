@@ -1,0 +1,4 @@
+# Site-wide configuration
+site:
+  base_url: "https://jrh3k5.orbiter.website"
+  author: "Joshua Hyde"
