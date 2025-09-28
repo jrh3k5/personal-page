@@ -30,4 +30,4 @@ jobs:
         env:
           ORBITER_API_KEY: ${{ secrets.ORBITER_API_KEY }}
           SOURCE: github-action
-        run: npx orbiter-cli update --siteId jrh3k5.orbiter.website -d dist
+        run: npx orbiter-cli update -d jrh3k5.orbiter.website dist
