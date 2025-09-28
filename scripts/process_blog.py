@@ -108,10 +108,11 @@ def generate_table_of_contents(content):
     if not headers:
         return ''
 
-    # Generate collapsible TOC HTML
+    # Generate collapsible TOC HTML (CSS-only)
     toc_html = ['<div class="table-of-contents">']
-    toc_html.append('<h3 class="toc-toggle" onclick="toggleTOC()">Table of Contents <span class="toc-arrow">▶</span></h3>')
-    toc_html.append('<ul class="toc-content" style="display: none;">')
+    toc_html.append('<input type="checkbox" id="toc-toggle" class="toc-checkbox">')
+    toc_html.append('<label for="toc-toggle" class="toc-header">Table of Contents <span class="toc-arrow"></span></label>')
+    toc_html.append('<ul class="toc-content">')
 
     for header in headers:
         indent_class = f'toc-level-{header["level"]}'

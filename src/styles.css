@@ -353,35 +353,54 @@ h1 {
   margin-bottom: 30px;
 }
 
-.table-of-contents h3 {
+.table-of-contents .toc-checkbox {
+  display: none;
+}
+
+.table-of-contents .toc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin: 0 0 15px 0;
   color: #111827;
   font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.2s ease;
   border-left: none;
   padding-left: 0;
 }
 
-.toc-toggle {
-  cursor: pointer;
-  user-select: none;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: color 0.2s ease;
-}
-
-.toc-toggle:hover {
+.table-of-contents .toc-header:hover {
   color: #7c3aed;
 }
 
-.toc-arrow {
+.table-of-contents .toc-arrow {
   font-size: 0.8em;
   color: #7c3aed;
   transition: transform 0.2s ease;
 }
 
-.toc-content {
-  transition: all 0.3s ease;
+.table-of-contents .toc-arrow::before {
+  content: "▶";
+}
+
+.table-of-contents .toc-checkbox:checked + .toc-header .toc-arrow::before {
+  content: "▼";
+}
+
+.table-of-contents .toc-content {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s ease;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.table-of-contents .toc-checkbox:checked ~ .toc-content {
+  max-height: 1000px;
 }
 
 .table-of-contents ul {
