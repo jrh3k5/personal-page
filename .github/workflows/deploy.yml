@@ -4,16 +4,16 @@ on:
     branches: [main]
  
 jobs:
-  build:
-    uses: ./.github/workflows/build.yml
+  validate:
+    uses: ./.github/workflows/validate-html.yml
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
+    needs: validate
 
     steps:
-      - uses: actions/checkout@v4
-      
+      - uses: actions/checkout@v3
+
       - name: Download build artifacts
         uses: actions/download-artifact@v4
         with:
@@ -21,8 +21,9 @@ jobs:
           path: dist/
 
       - name: Deploy to Orbiter
-        shell: bash
-        env:
-          ORBITER_API_KEY: ${{ secrets.ORBITER_API_KEY }}
-          SOURCE: github-action
-        run: npx orbiter-cli update -d jrh3k5.orbiter.website dist
+        uses: orbiterhost/orbiter-github-actions@v0.1.4 # Update with latest version
+        with:
+          project-name: "jrh3k5.orbiter.website"
+          build-dir: "./dist"
+          api-key: ${{ secrets.ORBITER_API_KEY }}
+          node-version: "20.x"
