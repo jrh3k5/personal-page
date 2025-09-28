@@ -249,7 +249,7 @@ Immich will, at this point, walk you through setting up your Immich instance.
 
 Once you've got it set up, test the setup by trying to upload a photo. It should work; if it doesn't, feel free to join the Immich Discord server (linked on their site) for troubleshooting assistance - it's a lively server with a lot of helpful people.
 
-#### Making Immich Internat-Accessible
+#### Making Immich Internet-Accessible
 
 Now that you've got Immich running on your Raspberry Pi, your next overall step is to make this Internet-accessible so that you can both find your photos on the go and upload them from your phone as background uploads. Do **not** simply open up port forwarding to port 2283 of your Immich instance! This will transmit all of your data in the clear, which means anyone on the WiFi networks you're on or any of the Internet infrastructure between you and your Immich instance can see what your photos (and, likely, login credentials) are!
 
