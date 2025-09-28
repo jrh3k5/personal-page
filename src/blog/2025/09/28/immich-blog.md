@@ -11,6 +11,8 @@ There are a few reasons I decided to set up Immich:
 * I have photos scattered across multiple places - social media, Google Photos, some server drives, and some online storage drives, and I want them all in one place
 * I want my photos, once in all in one place, to be easily accessible - from my phone, from a browser - and searchable so that I can find that one photo that one time I did that thing at that place
 * I want to feed that photo storage into a backup strategy so that I have a way of recovering all my photos should disaster strike
+  * I don't document the strategy here, but you can find plenty of articles about doing what I do - using `rclone` to push my photos up to remote storage.
+  * In the interest of the [3-2-1 backup rule](https://en.wikipedia.org/wiki/Backup#3-2-1_Backup_Rule), I also suggest using `rclone` to copy your photos periodically to some storage device that you keep in a safe location that you can physically access.
 
 ### So Why Not Google Photos?
 
