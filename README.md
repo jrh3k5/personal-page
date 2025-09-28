@@ -31,19 +31,9 @@ A simple static website showcasing presentations and providing links to social p
 
 ### Build Instructions
 
-1. **Using the build script (recommended):**
-   ```bash
-   ./scripts/build.sh
-   ```
-
-2. **Manual build process:**
-   ```bash
-   mkdir -p ./dist
-   python3 ./scripts/generate_html_simple.py ./src/presentations.yaml ./src/index.html.template ./dist/index.html
-   # Copy static files (excluding template and yaml files)
-   cp ./src/*.css ./src/*.png ./dist/
-   cp -r ./src/blog ./dist/ 2>/dev/null || true
-   ```
+```bash
+./scripts/build.sh
+```
 
 The build process:
 1. Processes the HTML template (`index.html.template`) with presentation data from `presentations.yaml`
