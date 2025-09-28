@@ -6,11 +6,15 @@ A simple static website showcasing presentations and providing links to social p
 
 ```
 ├── src/                           # Source files for the website
-│   ├── index.html.template       # HTML template with placeholders
-│   ├── presentations.yaml        # Presentation data in YAML format
-│   ├── styles.css                # CSS styling
-│   ├── images/                   # Images and icons
-│   │   ├── *.png                 # PNG image files
+│   ├── static/                   # Static assets (copied as-is)
+│   │   ├── styles.css            # CSS styling
+│   │   └── images/               # Images and icons
+│   │       └── *.png             # PNG image files
+│   ├── templates/                # Templates and configuration
+│   │   ├── index.html.template   # HTML template with placeholders
+│   │   ├── blog-post.html.template
+│   │   ├── blog-index.html.template
+│   │   └── presentations.yaml    # Presentation data in YAML format
 │   └── blog/                     # Blog content (Markdown files)
 ├── scripts/                      # Build and deployment scripts
 │   ├── build.sh                 # Main build script
@@ -55,7 +59,7 @@ The site uses a template-based build system for maintainability:
 
 ### Adding/Editing Presentations
 
-1. Edit `src/presentations.yaml` to add or modify presentation data
+1. Edit `src/templates/presentations.yaml` to add or modify presentation data
 2. Run `./scripts/build.sh` to regenerate the site
 
 ### Adding/Editing Blog Posts
@@ -74,14 +78,14 @@ Blog posts support:
 
 ### Modifying the Layout
 
-1. Edit `src/index.html.template` to change the HTML structure
+1. Edit `src/templates/index.html.template` to change the HTML structure
 2. Use `{{PRESENTATIONS}}` as a placeholder where presentation content should be inserted
 3. Run `./scripts/build.sh` to regenerate the site
 
 ### Other Changes
 
-1. Edit CSS in `src/styles.css`
-2. Add/modify images in `src/images/`
+1. Edit CSS in `src/static/styles.css`
+2. Add/modify images in `src/static/images/`
 3. Edit blog content in `src/blog/`
 4. Run `./scripts/build.sh` to update `dist/`
 5. Serve the `dist/` directory with any static web server for testing
