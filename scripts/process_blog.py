@@ -80,6 +80,67 @@ def markdown_to_html(content):
 
     return content
 
+def generate_table_of_contents(content):
+    """Generate a table of contents from headers in the content."""
+    import re
+
+    # Find all headers in the content
+    header_pattern = r'^(#{1,6})\s+(.*?)$'
+    headers = []
+
+    lines = content.split('\n')
+    for line in lines:
+        match = re.match(header_pattern, line, re.MULTILINE)
+        if match:
+            level = len(match.group(1))  # Number of # characters
+            title = match.group(2).strip()
+
+            # Generate anchor ID (lowercase, replace spaces with hyphens, remove special chars)
+            anchor_id = re.sub(r'[^\w\s-]', '', title.lower())
+            anchor_id = re.sub(r'[-\s]+', '-', anchor_id).strip('-')
+
+            headers.append({
+                'level': level,
+                'title': title,
+                'anchor': anchor_id
+            })
+
+    if not headers:
+        return ''
+
+    # Generate collapsible TOC HTML
+    toc_html = ['<div class="table-of-contents">']
+    toc_html.append('<h3 class="toc-toggle" onclick="toggleTOC()">Table of Contents <span class="toc-arrow">▶</span></h3>')
+    toc_html.append('<ul class="toc-content" style="display: none;">')
+
+    for header in headers:
+        indent_class = f'toc-level-{header["level"]}'
+        toc_html.append(f'  <li class="{indent_class}"><a href="#{header["anchor"]}">{header["title"]}</a></li>')
+
+    toc_html.append('</ul>')
+    toc_html.append('</div>')
+
+    return '\n'.join(toc_html)
+
+def add_header_anchors(content):
+    """Add anchor IDs to headers in the HTML content."""
+    import re
+
+    def replace_header(match):
+        tag = match.group(1)  # h1, h2, etc.
+        title = match.group(2)
+
+        # Generate anchor ID
+        anchor_id = re.sub(r'[^\w\s-]', '', title.lower())
+        anchor_id = re.sub(r'[-\s]+', '-', anchor_id).strip('-')
+
+        return f'<{tag} id="{anchor_id}">{title}</{tag}>'
+
+    # Replace all headers with anchored versions
+    content = re.sub(r'<(h[1-6])>(.*?)</\1>', replace_header, content)
+
+    return content
+
 def extract_metadata(content):
     """Extract title and other metadata from markdown content."""
     import html
@@ -122,8 +183,14 @@ def process_blog_file(file_path, output_dir, blog_template):
     # Extract metadata
     metadata = extract_metadata(content)
 
+    # Generate table of contents from markdown
+    toc_html = generate_table_of_contents(content)
+
     # Convert to HTML
     html_content = markdown_to_html(content)
+
+    # Add anchor IDs to headers
+    html_content = add_header_anchors(html_content)
 
     # Generate output path
     rel_path = os.path.relpath(file_path, 'src/blog')
@@ -155,6 +222,7 @@ def process_blog_file(file_path, output_dir, blog_template):
 
     # Generate HTML from template
     final_html = blog_template.replace('{{TITLE}}', metadata['title'])
+    final_html = final_html.replace('{{TABLE_OF_CONTENTS}}', toc_html)
     final_html = final_html.replace('{{CONTENT}}', html_content)
     final_html = final_html.replace('{{CSS_PATH}}', css_path)
     final_html = final_html.replace('{{HOME_PATH}}', home_path)

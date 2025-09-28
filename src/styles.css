@@ -344,6 +344,107 @@ h1 {
   text-decoration: underline;
 }
 
+/* Table of Contents */
+.table-of-contents {
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.table-of-contents h3 {
+  margin: 0 0 15px 0;
+  color: #111827;
+  font-size: 1.1rem;
+  border-left: none;
+  padding-left: 0;
+}
+
+.toc-toggle {
+  cursor: pointer;
+  user-select: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.toc-toggle:hover {
+  color: #7c3aed;
+}
+
+.toc-arrow {
+  font-size: 0.8em;
+  color: #7c3aed;
+  transition: transform 0.2s ease;
+}
+
+.toc-content {
+  transition: all 0.3s ease;
+}
+
+.table-of-contents ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.table-of-contents li {
+  margin: 0;
+  padding: 4px 0;
+}
+
+.table-of-contents a {
+  color: #4b5563;
+  text-decoration: none;
+  font-size: 0.95em;
+  line-height: 1.4;
+  display: block;
+  padding: 2px 0;
+  transition: color 0.2s ease;
+}
+
+.table-of-contents a:hover {
+  color: #7c3aed;
+  text-decoration: underline;
+}
+
+/* TOC indentation levels */
+.toc-level-1 a {
+  font-weight: 600;
+  color: #111827;
+}
+
+.toc-level-2 a {
+  padding-left: 20px;
+  color: #374151;
+  font-weight: 500;
+}
+
+.toc-level-3 a {
+  padding-left: 40px;
+  color: #4b5563;
+}
+
+.toc-level-4 a {
+  padding-left: 60px;
+  color: #6b7280;
+  font-size: 0.9em;
+}
+
+.toc-level-5 a {
+  padding-left: 80px;
+  color: #6b7280;
+  font-size: 0.85em;
+}
+
+.toc-level-6 a {
+  padding-left: 100px;
+  color: #9ca3af;
+  font-size: 0.8em;
+}
+
 /* Blog Footer */
 .blog-footer {
   text-align: center;

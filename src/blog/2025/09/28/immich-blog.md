@@ -242,7 +242,7 @@ docker compose up -d
 It may take a few minutes to get everything set up. If something doesn't work, please feel free to post a question using the "report an issue" link in this page. Once everything is healthy, you should be able to reach Immich here:
 
 ```
-http://<IP of your Raspberry Pi instance>:2283
+http://RASPBERRY_PI_IP_ADDRESS:2283
 ```
 
 Immich will, at this point, walk you through setting up your Immich instance.
@@ -284,7 +284,7 @@ sudo apt install nginx
 This will install a barebones instance of nginx in your system. You can test that nginx is working by going to:
 
 ```
-http://<your Raspberry Pi IP address>/
+http://RASPBERRY_PI_IP_ADDRESS/
 ```
 
 ##### Setting up an SSL Certificate

@@ -21,12 +21,27 @@
     <meta name="twitter:description" content="{{SUMMARY}}">
 
     <link rel="stylesheet" href="{{CSS_PATH}}">
+    <script>
+      function toggleTOC() {
+        const content = document.querySelector('.toc-content');
+        const arrow = document.querySelector('.toc-arrow');
+
+        if (content.style.display === 'none') {
+          content.style.display = 'block';
+          arrow.textContent = '▼';
+        } else {
+          content.style.display = 'none';
+          arrow.textContent = '▶';
+        }
+      }
+    </script>
   </head>
   <body>
     <div class="blog-navigation">
       <a href="{{HOME_PATH}}">← Home</a> | <a href="{{BLOG_INDEX_PATH}}">← Blog Index</a>
     </div>
     <article class="blog-post">
+      {{TABLE_OF_CONTENTS}}
       {{CONTENT}}
     </article>
     <div class="blog-footer">
