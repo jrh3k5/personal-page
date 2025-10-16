@@ -12,3 +12,10 @@ presentations:
     summary: "A 5- to 7-minute prepared speech, targeting non-technical audiences on the benefits of decentralization and a brief example of how decentralization can work."
     download_url: "https://harlequin-legal-turkey-651.mypinata.cloud/ipfs/bafybeias7g4ixy74qqmjr7r3lxxoukncrwkytigzoyogzpbkoxd7k5zvt4"
     download_format: "PDF"
+
+  - title: "You Don't Have to be a Hacker to Use Hacker Tools, Part 3: Encrypted Internet Browsing with Tor"
+    thumbnail: "images/hacker_tools_p3_20251016171100_thumb_500x281.png"
+    thumbnail_alt: "Thumbnail for Hacker Tools Part 3: Encrypted Internet Browsing with Tor"
+    summary: "A 5- to 7-minute prepared speech, targeting non-technical audiences on Tor, how it works, why to use it, and how to use it."
+    download_url: "https://harlequin-legal-turkey-651.mypinata.cloud/ipfs/bafybeia67q4gw3ov7vpy3lg443hp7qmrfg6m3of7vq6etsj6y634m4etli"
+    download_format: "PDF"
