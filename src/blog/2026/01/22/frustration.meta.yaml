@@ -1,0 +1,14 @@
+# Metadata for the Frustration blog post
+
+# Blog post thumbnail (used in index pages and social sharing)
+thumbnail:
+  image: "images/deal-with-it-sunglasses_512x512.png"
+  alt: "'Deal with it' sunglasses"
+
+# OpenGraph metadata (uses rectangular image for better social media display)
+og:
+  image: "images/deal-with-it-sunglasses_1200x630.png"
+
+# SEO metadata
+seo:
+  keywords: ["google", "foss", "privacy", "proton", "openstreetmap", "osmand", "joplin"]
