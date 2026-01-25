@@ -300,7 +300,7 @@ function generateBlogIndex(posts, indexTemplate, outputPath) {
     if (post.thumbnail) {
       thumbnailHtml = `
             <div class="blog-thumbnail">
-                <img src="${post.thumbnail}" alt="${post.thumbnailAlt}" />
+                <img src="../${post.thumbnail}" alt="${post.thumbnailAlt}" />
             </div>`;
     }
 
