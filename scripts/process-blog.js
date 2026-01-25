@@ -207,7 +207,7 @@ function generateBlogIndex(posts, indexTemplate, outputPath) {
             <div class="blog-content">
                 <h2><a href="${post.url}">${post.title}</a></h2>
                 <p class="blog-date">${post.dateDisplay}</p>
-                <p class="blog-summary">${post.summary}</p>
+                <p class="blog-summary">${post.previewText}</p>
             </div>
         </article>`;
   }).join('\n');

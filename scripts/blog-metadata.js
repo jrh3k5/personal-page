@@ -8,6 +8,7 @@ class BlogMetadata {
   constructor(
     title,
     summary,
+    previewText,
     publicationDate,
     thumbnail, 
     openGraph, 
@@ -92,23 +93,43 @@ function loadBlogMetadata(filePath) {
   const lines = blogContent.split('\n');
 
   let blogTitle;
+  let previewText;
   for (const line of lines) {
     if (line.startsWith('#')) {
       if (!blogTitle && line.startsWith('# ')) {
         blogTitle = line.slice(2).trim();
+      }
+    } else if (!previewText && line.trim()) {
+        // Clean up markdown formatting for summary
+        let cleanLine = line
+          .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links
+          .replace(/\*\*(.*?)\*\*/g, '$1')          // Remove bold
+          .replace(/\*(.*?)\*/g, '$1')              // Remove italic
+          .replace(/`([^`]+)`/g, '$1');             // Remove inline code
 
+        previewText = cleanLine.trim().length > 200
+          ? cleanLine.trim().slice(0, 200) + '...'
+          : cleanLine.trim();
+      }
+
+      if (!previewText && !blogTitle) {
+        // Stop reading the lines once we have both title and summary
         break;
       }
-    }
   }
 
   if (!blogTitle) {
     throw new Error('Unable to extract blog title from file: ' + filePath);
   }
 
+  if (!previewText) {
+    throw new Error('Unable to extract blog preview text from file: ' + filePath);
+  }
+
   return new BlogMetadata(
     blogTitle,
     data.summary,
+    previewText,
     publishedDate,
     thumbnailData,
     openGraphData,
