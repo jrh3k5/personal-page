@@ -4,7 +4,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
-const { loadBlogMetadata } = require('./blog-metadata');
+const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
 const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
 
@@ -139,9 +139,8 @@ function extractBlogMetadata(content, filePath = null) {
  */
 function getRecentBlogPosts(limit = 5) {
   const posts = [];
-  const blogDir = 'src/blog';
 
-  if (!fs.existsSync(blogDir)) {
+  if (!fs.existsSync(blogSourceDir)) {
     return posts;
   }
 
@@ -154,7 +153,7 @@ function getRecentBlogPosts(limit = 5) {
       if (stat.isDirectory()) {
         processDirectory(itemPath);
       } else if (item.endsWith('.md')) {
-        const relPath = path.relative('src/blog', itemPath);
+        const relPath = path.relative(blogSourceDir, itemPath);
 
         // Extract date from path (YYYY/MM/DD format)
         const pathParts = relPath.split('/');
@@ -202,7 +201,7 @@ function getRecentBlogPosts(limit = 5) {
     }
   }
 
-  processDirectory(blogDir);
+  processDirectory(blogSourceDir);
 
   // Sort by date (newest first) and limit
   posts.sort((a, b) => b.dateObj - a.dateObj);

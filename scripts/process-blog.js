@@ -5,7 +5,7 @@ const path = require('path');
 const yaml = require('js-yaml');
 const { marked } = require('marked');
 
-const { loadBlogMetadata } = require('./blog-metadata');
+const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
 const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
 
@@ -132,7 +132,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const finalHtmlContent = addHeaderAnchors(htmlContent);
 
   // Generate output path
-  const relPath = path.relative('src/blog', filePath);
+  const relPath = path.relative(blogSourceDir, filePath);
   const outputPath = path.join(outputDir, relPath.replace('.md', '.html'));
 
   // Create output directory
@@ -316,9 +316,8 @@ function main() {
 
   // Process all markdown files
   const posts = [];
-  const blogDir = 'src/blog';
 
-  if (fs.existsSync(blogDir)) {
+  if (fs.existsSync(blogSourceDir)) {
     function processDirectory(dir) {
       const items = fs.readdirSync(dir);
       for (const item of items) {
@@ -335,7 +334,7 @@ function main() {
       }
     }
 
-    processDirectory(blogDir);
+    processDirectory(blogSourceDir);
   }
 
   // Generate blog index

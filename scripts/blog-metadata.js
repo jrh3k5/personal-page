@@ -2,6 +2,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
+const blogSourceDir = './src/blog';
+
 /**
  * Load metadata from a .meta.yaml file if it exists
  */
@@ -17,4 +19,4 @@ function loadBlogMetadata(filePath) {
   return {};
 }
 
-module.exports = { loadBlogMetadata };
+module.exports = { blogSourceDir, loadBlogMetadata };

@@ -3,6 +3,7 @@
 const fs = require('fs-extra');
 const path = require('path');
 const { spawn } = require('child_process');
+const { blogSourceDir } = require('./blog-metadata');
 
 /**
  * Run a command and return a promise
@@ -61,7 +62,7 @@ async function build() {
     );
 
     // Process blog content if it exists
-    if (fs.existsSync('src/blog') && fs.readdirSync('src/blog').some(file => file.endsWith('.md') || fs.statSync(path.join('src/blog', file)).isDirectory())) {
+    if (fs.existsSync(blogSourceDir) && fs.readdirSync(blogSourceDir).some(file => file.endsWith('.md') || fs.statSync(path.join(blogSourceDir, file)).isDirectory())) {
       await runCommand(
         'node',
         ['scripts/process-blog.js', 'src/templates/blog-post.html.template', 'src/templates/blog-index.html.template', 'dist/'],
