@@ -144,20 +144,6 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const homePath = '../'.repeat(pathDepth + 1) + 'index.html';
   const blogIndexPath = pathDepth > 0 ? '../'.repeat(pathDepth) + 'index.html' : 'index.html';
 
-  // Extract date from path for metadata
-  const pathParts = relPath.split('/');
-  let publishedDate = '2025-01-01T00:00:00Z';
-  if (pathParts.length >= 3) {
-    try {
-      const year = pathParts[0];
-      const month = pathParts[1];
-      const day = pathParts[2];
-      publishedDate = `${year}-${month}-${day}T00:00:00Z`;
-    } catch (error) {
-      // Use default date
-    }
-  }
-
   // Generate blog URL
   const blogUrl = `blog/${relPath.replace('.md', '.html')}`;
 
@@ -208,7 +194,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
     .replace(/\{\{HOME_PATH\}\}/g, homePath)
     .replace(/\{\{BLOG_INDEX_PATH\}\}/g, blogIndexPath)
     .replace(/\{\{SUMMARY\}\}/g, metadata.summary)
-    .replace(/\{\{PUBLISHED_DATE\}\}/g, publishedDate)
+    .replace(/\{\{PUBLISHED_DATE\}\}/g, metadata.publishedDate)
     .replace(/\{\{BLOG_URL\}\}/g, blogUrl)
     .replace(/\{\{OG_TYPE\}\}/g, ogType)
     .replace(/\{\{OG_IMAGE_META\}\}/g, ogImageMeta)
@@ -223,25 +209,12 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const thumbnailImage = externalMeta.thumbnail?.image || '';
   const thumbnailAlt = externalMeta.thumbnail?.alt || '';
 
-  // Extract date from path
-  let dateObj = new Date();
-  if (pathParts.length >= 3) {
-    try {
-      const year = parseInt(pathParts[0]);
-      const month = parseInt(pathParts[1]) - 1; // JavaScript months are 0-based
-      const day = parseInt(pathParts[2]);
-      dateObj = new Date(year, month, day);
-    } catch (error) {
-      // Use current date
-    }
-  }
-
   return {
     title: metadata.title,
     summary: metadata.summary,
     url: relPath.replace('.md', '.html'),
-    date: dateObj.toISOString().split('T')[0],
-    dateDisplay: dateObj.toLocaleDateString('en-US', {
+    date: metadata.externalMeta.publicationDate.toISOString().split('T')[0],
+    dateDisplay: metadata.externalMeta.publicationDate.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

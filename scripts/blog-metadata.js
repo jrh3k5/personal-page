@@ -5,8 +5,11 @@ const yaml = require('js-yaml');
 const blogSourceDir = './src/blog';
 
 class BlogMetadata {
-  constructor(thumbnail) {
+  constructor(thumbnail, openGraph, seo, publicationDate) {
     this.thumbnail = thumbnail;
+    this.openGraph = openGraph;
+    this.seo = seo;
+    this.publicationDate = publicationDate;
   }
 }
 
@@ -40,10 +43,41 @@ function loadBlogMetadata(filePath) {
     const content = fs.readFileSync(metaPath, 'utf8');
     const data = yaml.load(content) || {};
     
+    // Extract date from path for metadata
+    // First strip any possible preceding "./" from the path
+    const cleanPath = filePath.startsWith('./') ? filePath.slice(2) : filePath;
+    const pathParts = cleanPath.split('/');
+    let publishedDate;
+    if (pathParts.length != 6) {
+      throw new Error('Unable to extract date from blog post path: ' + filePath);
+    }
+    
+    const year = pathParts[2];
+    const month = pathParts[3];
+    const day = pathParts[4];
+    publishedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+    if (!publishedDate || isNaN(publishedDate.getTime())) {
+      throw new Error('Invalid date extracted from blog post path: ' + filePath);
+    }
+
+    const thumbnailData = new BlogThumbnail(
+      data.thumbnail.image,
+      data.thumbnail.alt,
+    );
+
+    const openGraphData = new BlogOpenGraph(
+      data.og.image,
+    );
+
+    const seoData = new BlogSEO(
+      data.seo.keywords,
+    );
+
     return new BlogMetadata(
-      data.thumbnail ? new BlogThumbnail(data.thumbnail.image, data.thumbnail.alt) : null,
-      data.openGraph ? new BlogOpenGraph(data.openGraph.image) : null,
-      data.seo ? new BlogSEO(data.seo.keywords) : null
+      thumbnailData,
+      openGraphData,
+      seoData,
+      publishedDate
     );
   }
 
