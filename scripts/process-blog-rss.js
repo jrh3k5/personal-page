@@ -38,7 +38,7 @@ function generateRootXMLDoc() {
         xml += `      <title>${post.metadata.title}</title>\n`;
         xml += `      <link>${link}</link>\n`;
         xml += `      <description>${description}</description>\n`;
-        xml += `      <pubDate>${post.metadata.publicationDate.toISOString()}</pubDate>\n`;
+        xml += `      <pubDate>${post.metadata.publicationDate.toUTCString()}</pubDate>\n`;
         xml += '    </item>\n';
     });
 
