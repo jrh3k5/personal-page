@@ -6,20 +6,7 @@ const yaml = require('js-yaml');
 const { marked } = require('marked');
 
 const loadBlogMetadata = require('./blog-metadata').loadBlogMetadata;
-
-/**
- * Load site configuration
- */
-function loadSiteConfig() {
-  const configPath = path.join(__dirname, '..', 'src', 'config.yml');
-
-  if (fs.existsSync(configPath)) {
-    const content = fs.readFileSync(configPath, 'utf8');
-    return yaml.load(content) || {};
-  }
-
-  return {};
-}
+const loadSiteConfig = require('./site-config').loadSiteConfig;
 
 /**
  * Generate table of contents from markdown content
