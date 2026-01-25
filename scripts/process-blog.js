@@ -10,9 +10,9 @@ const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
 
 /**
- * Generates blog post URL from file path
+ * Generates blog post URL from file path, relative to the blog/ directory of the site.
  */
-function generateBlogPostUrl(blogFilePath) {
+function generateRelativeBlogPostUrl(blogFilePath) {
   const relPath = path.relative(blogSourceDir, blogFilePath);
   return relPath.replace('.md', '.html');
 }
@@ -139,9 +139,8 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const finalHtmlContent = addHeaderAnchors(htmlContent);
 
   // Generate output path
-  const relativeUrl = generateBlogPostUrl(filePath);
+  const relativeUrl = generateRelativeBlogPostUrl(filePath);
   const outputPath = path.join(outputDir, relativeUrl);
-  console.log("outputPath:", outputPath);
 
   // Create output directory
   fs.ensureDirSync(path.dirname(outputPath));
@@ -328,3 +327,5 @@ function main() {
 if (require.main === module) {
   main();
 }
+
+module.exports = { generateRelativeBlogPostUrl };

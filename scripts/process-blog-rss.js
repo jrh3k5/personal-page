@@ -4,6 +4,7 @@ const path = require('path');
 const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
 const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
+const { generateRelativeBlogPostUrl } = require('./process-blog');
 
 // Generate root XML document for RSS/Atom feeds
 function generateRootXMLDoc() {
@@ -17,19 +18,23 @@ function generateRootXMLDoc() {
     xml += `    <link>${siteConfig.site.base_url}</link>\n`;
     xml += `    <description>Blogs by ${siteConfig.site.author}</description>\n`;
 
-    const allMetadata = loadAllBlogMetadata(blogSourceDir);
-    console.log(`Loaded metadata for ${allMetadata.length} blog posts.`);
+    const allPosts = loadDirectoryBlogPosts(blogSourceDir);
+    console.log(`Loaded metadata for ${allPosts.length} blog posts.`);
 
-    allMetadata.forEach((metadata) => {
-        const title = metadata.title || 'Untitled Post';
-        const link = makeAbsoluteUrl(siteConfig, metadata.permalink || '');
-        const description = metadata.description || '';
+    // Sort the posts by publication date, newest first
+    allPosts.sort((a, b) => b.metadata.publicationDate - a.metadata.publicationDate);
+
+    allPosts.forEach((post) => {
+        const title = post.metadata.title || 'Untitled Post';
+        const relativeUrl = `blog/${generateRelativeBlogPostUrl(post.filePath)}`;
+        const link = makeAbsoluteUrl(siteConfig, relativeUrl);
+        const description = post.metadata.description || '';
 
         xml += '    <item>\n';
         xml += `      <title>${title}</title>\n`;
         xml += `      <link>${link}</link>\n`;
         xml += `      <description>${description}</description>\n`;
-        xml += `      <pubDate>${metadata.publicationDate.toISOString()}</pubDate>\n`;
+        xml += `      <pubDate>${post.metadata.publicationDate.toISOString()}</pubDate>\n`;
         xml += '    </item>\n';
     });
 
@@ -39,19 +44,7 @@ function generateRootXMLDoc() {
     return xml;
 }
 
-/*
- * Load all blog metadata
- */
-function loadAllBlogMetadata(blogDir) {
-  const allMetadata = loadDirectoryBlogMetadata(blogDir);
-
-  // Sort by most recent to oldest
-  allMetadata.sort((a, b) => b.publicationDate - a.publicationDate);
-
-  return allMetadata;
-}
-
-function loadDirectoryBlogMetadata(dir) {
+function loadDirectoryBlogPosts(dir) {
   const dirItems = fs.readdirSync(dir);
 
   const posts = [];
@@ -60,11 +53,14 @@ function loadDirectoryBlogMetadata(dir) {
     if (dirItem.endsWith('.md')) {
         const filePath = path.join(dir, dirItem);
         const metadata = loadBlogMetadata(filePath);
-        posts.push(metadata);
+        posts.push({
+            filePath: filePath,
+            metadata: metadata,
+        });
     } else {
         const recursePath = path.join(dir, dirItem);
         if (fs.statSync(recursePath).isDirectory()) {
-            const subDirPosts = loadDirectoryBlogMetadata(recursePath);
+            const subDirPosts = loadDirectoryBlogPosts(recursePath);
             posts.push(...subDirPosts);
         }
     }
