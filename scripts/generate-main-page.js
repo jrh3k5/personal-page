@@ -4,19 +4,9 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
-/**
- * Load site configuration
- */
-function loadSiteConfig() {
-  const configPath = path.join(__dirname, '..', 'src', 'config.yml');
-
-  if (fs.existsSync(configPath)) {
-    const content = fs.readFileSync(configPath, 'utf8');
-    return yaml.load(content) || {};
-  }
-
-  return {};
-}
+const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
+const { loadSiteConfig } = require('./site-config');
+const { makeAbsoluteUrl } = require('./url');
 
 /**
  * Load index page metadata
@@ -39,22 +29,12 @@ function loadIndexMetadata(templateFile) {
  * Generate social media meta tags
  */
 function generateSocialMetaTags(metadata, siteConfig) {
-  // Helper function to convert relative URLs to absolute
-  function makeAbsoluteUrl(relativeUrl) {
-    if (!relativeUrl) return relativeUrl;
-    if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) {
-      return relativeUrl;
-    }
-    const baseUrl = siteConfig.site?.base_url || '';
-    return baseUrl ? `${baseUrl}/${relativeUrl}` : relativeUrl;
-  }
-
   const title = metadata.title || 'Personal Site';
   const description = metadata.description || '';
   const ogType = metadata.og?.type || 'website';
   const twitterCardType = metadata.twitter?.card || 'summary_large_image';
   const siteName = metadata.og?.site_name || title;
-  const ogUrl = metadata.og?.url || makeAbsoluteUrl('');
+  const ogUrl = metadata.og?.url || makeAbsoluteUrl(siteConfig, '');
 
   // Generate image meta tags
   const ogImage = metadata.og?.image || metadata.thumbnail?.image;
@@ -74,7 +54,7 @@ function generateSocialMetaTags(metadata, siteConfig) {
     <meta property="og:site_name" content="${siteName}">`;
 
   if (ogImage) {
-    const absoluteOgImage = makeAbsoluteUrl(ogImage);
+    const absoluteOgImage = makeAbsoluteUrl(siteConfig, ogImage);
     metaTags += `
     <meta property="og:image" content="${absoluteOgImage}">`;
     if (ogImageAlt) {
@@ -91,7 +71,7 @@ function generateSocialMetaTags(metadata, siteConfig) {
     <meta name="twitter:description" content="${description}">`;
 
   if (twitterImage) {
-    const absoluteTwitterImage = makeAbsoluteUrl(twitterImage);
+    const absoluteTwitterImage = makeAbsoluteUrl(siteConfig, twitterImage);
     metaTags += `
     <meta name="twitter:image" content="${absoluteTwitterImage}">`;
   }
@@ -110,26 +90,6 @@ function parseYaml(content) {
     console.error(`Error parsing YAML: ${error.message}`);
     return [];
   }
-}
-
-/**
- * Load metadata from a .meta.yaml file if it exists
- */
-function loadBlogMetadata(filePath) {
-  const basePath = path.parse(filePath).dir + '/' + path.parse(filePath).name;
-  const metaPath = `${basePath}.meta.yaml`;
-
-  if (fs.existsSync(metaPath)) {
-    try {
-      const content = fs.readFileSync(metaPath, 'utf8');
-      return yaml.load(content) || {};
-    } catch (error) {
-      console.warn(`Warning: Could not load metadata from ${metaPath}: ${error.message}`);
-      return {};
-    }
-  }
-
-  return {};
 }
 
 /**
@@ -179,9 +139,8 @@ function extractBlogMetadata(content, filePath = null) {
  */
 function getRecentBlogPosts(limit = 5) {
   const posts = [];
-  const blogDir = 'src/blog';
 
-  if (!fs.existsSync(blogDir)) {
+  if (!fs.existsSync(blogSourceDir)) {
     return posts;
   }
 
@@ -194,7 +153,7 @@ function getRecentBlogPosts(limit = 5) {
       if (stat.isDirectory()) {
         processDirectory(itemPath);
       } else if (item.endsWith('.md')) {
-        const relPath = path.relative('src/blog', itemPath);
+        const relPath = path.relative(blogSourceDir, itemPath);
 
         // Extract date from path (YYYY/MM/DD format)
         const pathParts = relPath.split('/');
@@ -242,7 +201,7 @@ function getRecentBlogPosts(limit = 5) {
     }
   }
 
-  processDirectory(blogDir);
+  processDirectory(blogSourceDir);
 
   // Sort by date (newest first) and limit
   posts.sort((a, b) => b.dateObj - a.dateObj);
@@ -365,11 +324,3 @@ function main() {
 if (require.main === module) {
   main();
 }
-
-module.exports = {
-  generatePresentationHtml,
-  generateRecentBlogsHtml,
-  getRecentBlogPosts,
-  extractBlogMetadata,
-  loadBlogMetadata
-};

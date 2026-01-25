@@ -25,6 +25,8 @@
       </div>
       <div class="blog-link">
         <a href="blog/index.html">📝 View All Blog Posts</a>
+        |
+        <a href="blog/rss.xml">📡 Blog RSS Feed</a>
       </div>
     </div>
     <div>

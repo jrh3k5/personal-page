@@ -18,6 +18,8 @@
     </div>
     <div class="blog-navigation">
       <a href="../index.html">← Home</a>
+      |
+      <a href="./rss.xml">📡 Blog RSS Feed</a>
     </div>
   </body>
 </html>
