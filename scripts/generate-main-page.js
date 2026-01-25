@@ -325,11 +325,3 @@ function main() {
 if (require.main === module) {
   main();
 }
-
-module.exports = {
-  generatePresentationHtml,
-  generateRecentBlogsHtml,
-  getRecentBlogPosts,
-  extractBlogMetadata,
-  loadBlogMetadata
-};
