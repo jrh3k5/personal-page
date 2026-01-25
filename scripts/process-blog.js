@@ -5,6 +5,8 @@ const path = require('path');
 const yaml = require('js-yaml');
 const { marked } = require('marked');
 
+const loadBlogMetadata = require('./blog-metadata').loadBlogMetadata;
+
 /**
  * Load site configuration
  */
@@ -13,21 +15,6 @@ function loadSiteConfig() {
 
   if (fs.existsSync(configPath)) {
     const content = fs.readFileSync(configPath, 'utf8');
-    return yaml.load(content) || {};
-  }
-
-  return {};
-}
-
-/**
- * Load metadata from a .meta.yaml file if it exists
- */
-function loadBlogMetadata(filePath) {
-  const basePath = path.parse(filePath).dir + '/' + path.parse(filePath).name;
-  const metaPath = `${basePath}.meta.yaml`;
-
-  if (fs.existsSync(metaPath)) {
-    const content = fs.readFileSync(metaPath, 'utf8');
     return yaml.load(content) || {};
   }
 

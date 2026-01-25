@@ -4,6 +4,8 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
+const loadBlogMetadata = require('./blog-metadata').loadBlogMetadata;
+
 /**
  * Load site configuration
  */
@@ -110,26 +112,6 @@ function parseYaml(content) {
     console.error(`Error parsing YAML: ${error.message}`);
     return [];
   }
-}
-
-/**
- * Load metadata from a .meta.yaml file if it exists
- */
-function loadBlogMetadata(filePath) {
-  const basePath = path.parse(filePath).dir + '/' + path.parse(filePath).name;
-  const metaPath = `${basePath}.meta.yaml`;
-
-  if (fs.existsSync(metaPath)) {
-    try {
-      const content = fs.readFileSync(metaPath, 'utf8');
-      return yaml.load(content) || {};
-    } catch (error) {
-      console.warn(`Warning: Could not load metadata from ${metaPath}: ${error.message}`);
-      return {};
-    }
-  }
-
-  return {};
 }
 
 /**
