@@ -193,7 +193,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
     .replace(/\{\{HOME_PATH\}\}/g, homePath)
     .replace(/\{\{BLOG_INDEX_PATH\}\}/g, blogIndexPath)
     .replace(/\{\{SUMMARY\}\}/g, metadata.summary)
-    .replace(/\{\{PUBLISHED_DATE\}\}/g, metadata.publishedDate)
+    .replace(/\{\{PUBLISHED_DATE\}\}/g, metadata.externalMeta.publicationDate.toDateString())
     .replace(/\{\{BLOG_URL\}\}/g, blogUrl)
     .replace(/\{\{OG_TYPE\}\}/g, ogType)
     .replace(/\{\{OG_IMAGE_META\}\}/g, ogImageMeta)
