@@ -5,8 +5,8 @@ const path = require('path');
 const yaml = require('js-yaml');
 const { marked } = require('marked');
 
-const loadBlogMetadata = require('./blog-metadata').loadBlogMetadata;
-const loadSiteConfig = require('./site-config').loadSiteConfig;
+const { loadBlogMetadata } = require('./blog-metadata');
+const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
 
 /**
