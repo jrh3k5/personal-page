@@ -3,9 +3,52 @@ const fs = require('fs-extra');
 const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
 const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
+const { load } = require('js-yaml');
 
+// Generate root XML document for RSS/Atom feeds
+function generateRootXMLDoc() {
+    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
+    xml += '<rss version="2.0">\n';
+    xml += '  <channel>\n';
+
+    const siteConfig = loadSiteConfig();
+
+    xml += `    <title>Blogs by ${siteConfig.site.author}</title>\n`;
+    xml += `    <link>${siteConfig.site.base_url}</link>\n`;
+    xml += `    <description>Blogs by ${siteConfig.site.author}</description>\n`;
+
+    const allMetadata = loadAllBlogMetadata(blogSourceDir);
+    console.log(`Loaded metadata for ${allMetadata.length} blog posts.`);
+
+    allMetadata.forEach((metadata) => {
+        const title = metadata.title || 'Untitled Post';
+        const link = makeAbsoluteUrl(siteConfig, metadata.permalink || '');
+        const description = metadata.description || '';
+        const pubDate = new Date(metadata.date).toUTCString();
+
+        xml += '    <item>\n';
+        xml += `      <title>${title}</title>\n`;
+        xml += `      <link>${link}</link>\n`;
+        xml += `      <description>${description}</description>\n`;
+        xml += `      <pubDate>${pubDate}</pubDate>\n`;
+        xml += '    </item>\n';
+    });
+
+    xml += '  </channel>\n';
+    xml += '</rss>';
+
+    return xml;
+}
+
+/*
+ * Load all blog metadata
+ */
 function loadAllBlogMetadata(blogDir) {
-  const blogFiles = fs.readdirSync(blogDir).filter(file => file.endsWith('.md'));
+  const blogFiles = loadDirectoryBlogMetadata(blogDir);
+
+  // Sort by most recent to oldest
+  blogFiles.sort((a, b) => new Date(b.date) - new Date(a.date));
+
   const allMetadata = [];
 
   blogFiles.forEach(file => {
@@ -17,18 +60,23 @@ function loadAllBlogMetadata(blogDir) {
   return allMetadata;
 }
 
-// Generate root XML document for RSS/Atom feeds
-function generateRootXMLDoc() {
-    let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
-    xml += '<rss version="2.0">\n';
-    xml += '  <channel>\n';
+function loadDirectoryBlogMetadata(dir) {
+  const dirItems = fs.readdirSync(dir);
 
-    const allMetadata = loadAllBlogMetadata(blogSourceDir);
+  const posts = [];
+  
+  dirItems.forEach(dirItem => {
+    if (dirItem.endsWith('.md')) {
+        const filePath = `${dir}/${dirItem}`;
+        const metadata = loadBlogMetadata(filePath);
+        posts.push(metadata);
+    } else if (fs.statSync(`${dir}/${dirItem}`).isDirectory()) {
+        const subDirPosts = loadDirectoryBlogMetadata(`${dir}/${dirItem}`);
+        posts.push(...subDirPosts);
+    }
+  })
 
-    xml += '  </channel>\n';
-    xml += '</rss>';
-
-    return xml;
+  return posts;
 }
 
 function main() {
