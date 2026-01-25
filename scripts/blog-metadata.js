@@ -39,49 +39,49 @@ function loadBlogMetadata(filePath) {
   const basePath = path.parse(filePath).dir + '/' + path.parse(filePath).name;
   const metaPath = `${basePath}.meta.yaml`;
 
-  if (fs.existsSync(metaPath)) {
-    const content = fs.readFileSync(metaPath, 'utf8');
-    const data = yaml.load(content) || {};
-    
-    // Extract date from path for metadata
-    // First strip any possible preceding "./" from the path
-    const cleanPath = filePath.startsWith('./') ? filePath.slice(2) : filePath;
-    const pathParts = cleanPath.split('/');
-    let publishedDate;
-    if (pathParts.length != 6) {
-      throw new Error('Unable to extract date from blog post path: ' + filePath);
-    }
-    
-    const year = pathParts[2];
-    const month = pathParts[3];
-    const day = pathParts[4];
-    publishedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
-    if (!publishedDate || isNaN(publishedDate.getTime())) {
-      throw new Error('Invalid date extracted from blog post path: ' + filePath);
-    }
-
-    const thumbnailData = new BlogThumbnail(
-      data.thumbnail.image,
-      data.thumbnail.alt,
-    );
-
-    const openGraphData = new BlogOpenGraph(
-      data.og.image,
-    );
-
-    const seoData = new BlogSEO(
-      data.seo.keywords,
-    );
-
-    return new BlogMetadata(
-      thumbnailData,
-      openGraphData,
-      seoData,
-      publishedDate
-    );
+  if (!fs.existsSync(filePath)) {
+    throw new Error('Unable to log blog metadata from non-existent file path: ' + filePath);
   }
 
-  return new BlogMetadata();
+  const content = fs.readFileSync(metaPath, 'utf8');
+  const data = yaml.load(content) || {};
+  
+  // Extract date from path for metadata
+  // First strip any possible preceding "./" from the path
+  const cleanPath = filePath.startsWith('./') ? filePath.slice(2) : filePath;
+  const pathParts = cleanPath.split('/');
+  let publishedDate;
+  if (pathParts.length != 6) {
+    throw new Error('Unable to extract date from blog post path: ' + filePath);
+  }
+  
+  const year = pathParts[2];
+  const month = pathParts[3];
+  const day = pathParts[4];
+  publishedDate = new Date(`${year}-${month}-${day}T00:00:00Z`);
+  if (!publishedDate || isNaN(publishedDate.getTime())) {
+    throw new Error('Invalid date extracted from blog post path: ' + filePath);
+  }
+
+  const thumbnailData = new BlogThumbnail(
+    data.thumbnail.image,
+    data.thumbnail.alt,
+  );
+
+  const openGraphData = new BlogOpenGraph(
+    data.og.image,
+  );
+
+  const seoData = new BlogSEO(
+    data.seo.keywords,
+  );
+
+  return new BlogMetadata(
+    thumbnailData,
+    openGraphData,
+    seoData,
+    publishedDate
+  );
 }
 
 module.exports = { 

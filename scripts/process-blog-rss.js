@@ -24,13 +24,12 @@ function generateRootXMLDoc() {
         const title = metadata.title || 'Untitled Post';
         const link = makeAbsoluteUrl(siteConfig, metadata.permalink || '');
         const description = metadata.description || '';
-        const pubDate = new Date(metadata.date).toUTCString();
 
         xml += '    <item>\n';
         xml += `      <title>${title}</title>\n`;
         xml += `      <link>${link}</link>\n`;
         xml += `      <description>${description}</description>\n`;
-        xml += `      <pubDate>${pubDate}</pubDate>\n`;
+        xml += `      <pubDate>${metadata.publicationDate.toISOString()}</pubDate>\n`;
         xml += '    </item>\n';
     });
 
@@ -44,18 +43,10 @@ function generateRootXMLDoc() {
  * Load all blog metadata
  */
 function loadAllBlogMetadata(blogDir) {
-  const blogFiles = loadDirectoryBlogMetadata(blogDir);
+  const allMetadata = loadDirectoryBlogMetadata(blogDir);
 
   // Sort by most recent to oldest
-  blogFiles.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-  const allMetadata = [];
-
-  blogFiles.forEach(file => {
-    const filePath = `${blogDir}/${file}`;
-    const metadata = loadBlogMetadata(filePath);
-    allMetadata.push(metadata);
-  });
+  allMetadata.sort((a, b) => b.publicationDate - a.publicationDate);
 
   return allMetadata;
 }
