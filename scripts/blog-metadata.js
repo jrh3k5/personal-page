@@ -2,7 +2,7 @@ const fs = require('fs-extra');
 const path = require('path');
 const yaml = require('js-yaml');
 
-const blogSourceDir = './src/blog';
+const blogSourceDir = './src/blog/';
 
 class BlogMetadata {
   constructor(

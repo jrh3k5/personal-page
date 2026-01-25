@@ -10,6 +10,14 @@ const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
 
 /**
+ * Generates blog post URL from file path
+ */
+function generateBlogPostUrl(blogFilePath) {
+  const relPath = path.relative(blogSourceDir, blogFilePath);
+  return relPath.replace('.md', '.html');
+}
+
+/**
  * Generate table of contents from markdown content
  */
 function generateTableOfContents(content) {
@@ -70,7 +78,7 @@ function addHeaderAnchors(content) {
 /**
  * Extract metadata from markdown content
  */
-function extractMetadata(content, filePath = null) {
+function extractMetadata(content, filePath) {
   const lines = content.split('\n');
   let title = null;
   let summary = null;
@@ -101,7 +109,7 @@ function extractMetadata(content, filePath = null) {
   }
 
   // Load additional metadata from YAML file if available
-  const externalMeta = filePath ? loadBlogMetadata(filePath) : {};
+  const externalMeta = loadBlogMetadata(filePath);
 
   return {
     summary: summary || 'No summary available.',
@@ -131,23 +139,21 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const finalHtmlContent = addHeaderAnchors(htmlContent);
 
   // Generate output path
-  const relPath = path.relative(blogSourceDir, filePath);
-  const outputPath = path.join(outputDir, relPath.replace('.md', '.html'));
+  const relativeUrl = generateBlogPostUrl(filePath);
+  const outputPath = path.join(outputDir, relativeUrl);
+  console.log("outputPath:", outputPath);
 
   // Create output directory
   fs.ensureDirSync(path.dirname(outputPath));
 
   // Calculate relative path depth for CSS and navigation
-  const pathDepth = relPath.split('/').length - 1;
+  const pathDepth = relativeUrl.split('/').length - 1;
   const cssPath = '../'.repeat(pathDepth + 1) + 'styles.css';
   const homePath = '../'.repeat(pathDepth + 1) + 'index.html';
   const blogIndexPath = pathDepth > 0 ? '../'.repeat(pathDepth) + 'index.html' : 'index.html';
 
-  // Generate blog URL
-  const blogUrl = `blog/${relPath.replace('.md', '.html')}`;
-
   // Extract external metadata
-  const externalMeta = metadata.externalMeta || {};
+  const externalMeta = metadata.externalMeta;
 
   // Generate OpenGraph metadata (default to 'article' type)
   const ogType = externalMeta.og?.type || 'article';
@@ -194,7 +200,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
     .replace(/\{\{BLOG_INDEX_PATH\}\}/g, blogIndexPath)
     .replace(/\{\{SUMMARY\}\}/g, metadata.summary)
     .replace(/\{\{PUBLISHED_DATE\}\}/g, metadata.externalMeta.publicationDate.toDateString())
-    .replace(/\{\{BLOG_URL\}\}/g, blogUrl)
+    .replace(/\{\{BLOG_URL\}\}/g, relativeUrl)
     .replace(/\{\{OG_TYPE\}\}/g, ogType)
     .replace(/\{\{OG_IMAGE_META\}\}/g, ogImageMeta)
     .replace(/\{\{TWITTER_CARD_TYPE\}\}/g, twitterCardType)
@@ -211,7 +217,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   return {
     title: metadata.externalMeta.title,
     summary: metadata.summary,
-    url: relPath.replace('.md', '.html'),
+    url: relativeUrl,
     date: metadata.externalMeta.publicationDate.toISOString().split('T')[0],
     dateDisplay: metadata.externalMeta.publicationDate.toLocaleDateString('en-US', {
       year: 'numeric',

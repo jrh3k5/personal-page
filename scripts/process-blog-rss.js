@@ -1,9 +1,9 @@
 const fs = require('fs-extra');
+const path = require('path');
 
 const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
 const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
-const { load } = require('js-yaml');
 
 // Generate root XML document for RSS/Atom feeds
 function generateRootXMLDoc() {
@@ -58,12 +58,15 @@ function loadDirectoryBlogMetadata(dir) {
   
   dirItems.forEach(dirItem => {
     if (dirItem.endsWith('.md')) {
-        const filePath = `${dir}/${dirItem}`;
+        const filePath = path.join(dir, dirItem);
         const metadata = loadBlogMetadata(filePath);
         posts.push(metadata);
-    } else if (fs.statSync(`${dir}/${dirItem}`).isDirectory()) {
-        const subDirPosts = loadDirectoryBlogMetadata(`${dir}/${dirItem}`);
-        posts.push(...subDirPosts);
+    } else {
+        const recursePath = path.join(dir, dirItem);
+        if (fs.statSync(recursePath).isDirectory()) {
+            const subDirPosts = loadDirectoryBlogMetadata(recursePath);
+            posts.push(...subDirPosts);
+        }
     }
   })
 
