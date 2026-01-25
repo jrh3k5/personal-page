@@ -5,7 +5,14 @@ const yaml = require('js-yaml');
 const blogSourceDir = './src/blog';
 
 class BlogMetadata {
-  constructor(thumbnail, openGraph, seo, publicationDate) {
+  constructor(
+    title,
+    publicationDate,
+    thumbnail, 
+    openGraph, 
+    seo, 
+) {
+    this.title = title;
     this.thumbnail = thumbnail;
     this.openGraph = openGraph;
     this.seo = seo;
@@ -43,8 +50,11 @@ function loadBlogMetadata(filePath) {
     throw new Error('Unable to log blog metadata from non-existent file path: ' + filePath);
   }
 
-  const content = fs.readFileSync(metaPath, 'utf8');
-  const data = yaml.load(content) || {};
+  const metadataContent = fs.readFileSync(metaPath, 'utf8');
+  const data = yaml.load(metadataContent);
+  if (!data) {
+    throw new Error('Unable to parse blog metadata from file: ' + metaPath);
+  }
   
   // Extract date from path for metadata
   // First strip any possible preceding "./" from the path
@@ -76,11 +86,26 @@ function loadBlogMetadata(filePath) {
     data.seo.keywords,
   );
 
+  const blogContent = fs.readFileSync(filePath, 'utf8');
+
+  let blogTitle;
+  for (const line of blogContent.split('\n')) {
+    if (line.startsWith('# ')) {
+      blogTitle = line.slice(2).trim();
+      break;
+    }
+  }
+
+  if (!blogTitle) {
+    throw new Error('Unable to extract blog title from file: ' + filePath);
+  }
+
   return new BlogMetadata(
+    blogTitle,
+    publishedDate,
     thumbnailData,
     openGraphData,
     seoData,
-    publishedDate
   );
 }
 

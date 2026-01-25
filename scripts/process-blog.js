@@ -104,7 +104,6 @@ function extractMetadata(content, filePath = null) {
   const externalMeta = filePath ? loadBlogMetadata(filePath) : {};
 
   return {
-    title: title || 'Untitled',
     summary: summary || 'No summary available.',
     externalMeta
   };
@@ -187,7 +186,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
 
   // Generate HTML from template
   let finalHtml = blogTemplate
-    .replace(/\{\{TITLE\}\}/g, metadata.title)
+    .replace(/\{\{TITLE\}\}/g, metadata.externalMeta.title)
     .replace(/\{\{TABLE_OF_CONTENTS\}\}/g, tocHtml)
     .replace(/\{\{CONTENT\}\}/g, finalHtmlContent)
     .replace(/\{\{CSS_PATH\}\}/g, cssPath)
@@ -210,7 +209,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const thumbnailAlt = externalMeta.thumbnail?.alt || '';
 
   return {
-    title: metadata.title,
+    title: metadata.externalMeta.title,
     summary: metadata.summary,
     url: relPath.replace('.md', '.html'),
     date: metadata.externalMeta.publicationDate.toISOString().split('T')[0],
