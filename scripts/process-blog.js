@@ -76,48 +76,6 @@ function addHeaderAnchors(content) {
 }
 
 /**
- * Extract metadata from markdown content
- */
-function extractMetadata(content, filePath) {
-  const lines = content.split('\n');
-  let title = null;
-  let summary = null;
-
-  // Extract title from first H1
-  for (const line of lines) {
-    if (line.startsWith('# ')) {
-      title = line.slice(2).trim();
-      break;
-    }
-  }
-
-  // Extract summary from first paragraph
-  for (const line of lines) {
-    if (line.trim() && !line.startsWith('#')) {
-      // Clean up markdown formatting for summary
-      let cleanLine = line
-        .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links
-        .replace(/\*\*(.*?)\*\*/g, '$1')          // Remove bold
-        .replace(/\*(.*?)\*/g, '$1')              // Remove italic
-        .replace(/`([^`]+)`/g, '$1');             // Remove inline code
-
-      summary = cleanLine.trim().length > 200
-        ? cleanLine.trim().slice(0, 200) + '...'
-        : cleanLine.trim();
-      break;
-    }
-  }
-
-  // Load additional metadata from YAML file if available
-  const externalMeta = loadBlogMetadata(filePath);
-
-  return {
-    summary: summary || 'No summary available.',
-    externalMeta
-  };
-}
-
-/**
  * Process a single blog markdown file
  */
 function processBlogFile(filePath, outputDir, blogTemplate) {
@@ -127,7 +85,7 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const siteConfig = loadSiteConfig();
 
   // Extract metadata
-  const metadata = extractMetadata(content, filePath);
+  const metadata = loadBlogMetadata(filePath);
 
   // Generate table of contents from markdown
   const tocHtml = generateTableOfContents(content);
@@ -151,16 +109,13 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const homePath = '../'.repeat(pathDepth + 1) + 'index.html';
   const blogIndexPath = pathDepth > 0 ? '../'.repeat(pathDepth) + 'index.html' : 'index.html';
 
-  // Extract external metadata
-  const externalMeta = metadata.externalMeta;
-
   // Generate OpenGraph metadata (default to 'article' type)
-  const ogType = externalMeta.og?.type || 'article';
+  const ogType = metadata.og?.type || 'article';
   let ogImageMeta = '';
 
   // Use OpenGraph image, or fall back to thumbnail image
-  const ogImage = externalMeta.og?.image || externalMeta.thumbnail?.image;
-  const ogImageAlt = externalMeta.og?.image_alt || externalMeta.thumbnail?.alt;
+  const ogImage = metadata.og?.image || metadata.thumbnail?.image;
+  const ogImageAlt = metadata.og?.image_alt || metadata.thumbnail?.alt;
 
   if (ogImage) {
     const absoluteOgImage = makeAbsoluteUrl(siteConfig, ogImage);
@@ -171,11 +126,11 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   }
 
   // Generate Twitter Card metadata (default to 'summary_large_image' for better image display)
-  const twitterCardType = externalMeta.twitter?.card || 'summary_large_image';
+  const twitterCardType = metadata.twitter?.card || 'summary_large_image';
   let twitterImageMeta = '';
 
   // Use Twitter image, or fall back to OpenGraph image, or fall back to thumbnail image
-  const twitterImage = externalMeta.twitter?.image || ogImage;
+  const twitterImage = metadata.twitter?.image || ogImage;
 
   if (twitterImage) {
     const absoluteTwitterImage = makeAbsoluteUrl(twitterImage);
@@ -184,21 +139,21 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
 
   // Generate SEO keywords metadata
   let keywordsMeta = '';
-  const keywords = externalMeta.seo?.keywords;
+  const keywords = metadata.seo?.keywords;
   if (keywords && Array.isArray(keywords) && keywords.length > 0) {
     keywordsMeta = `\n    <meta name="keywords" content="${keywords.join(', ')}">`;
   }
 
   // Generate HTML from template
   let finalHtml = blogTemplate
-    .replace(/\{\{TITLE\}\}/g, metadata.externalMeta.title)
+    .replace(/\{\{TITLE\}\}/g, metadata.title)
     .replace(/\{\{TABLE_OF_CONTENTS\}\}/g, tocHtml)
     .replace(/\{\{CONTENT\}\}/g, finalHtmlContent)
     .replace(/\{\{CSS_PATH\}\}/g, cssPath)
     .replace(/\{\{HOME_PATH\}\}/g, homePath)
     .replace(/\{\{BLOG_INDEX_PATH\}\}/g, blogIndexPath)
     .replace(/\{\{SUMMARY\}\}/g, metadata.summary)
-    .replace(/\{\{PUBLISHED_DATE\}\}/g, metadata.externalMeta.publicationDate.toDateString())
+    .replace(/\{\{PUBLISHED_DATE\}\}/g, metadata.publicationDate.toDateString())
     .replace(/\{\{BLOG_URL\}\}/g, relativeUrl)
     .replace(/\{\{OG_TYPE\}\}/g, ogType)
     .replace(/\{\{OG_IMAGE_META\}\}/g, ogImageMeta)
@@ -210,15 +165,15 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   fs.writeFileSync(outputPath, finalHtml);
 
   // Extract thumbnail information from metadata
-  const thumbnailImage = externalMeta.thumbnail?.image || '';
-  const thumbnailAlt = externalMeta.thumbnail?.alt || '';
+  const thumbnailImage = metadata.thumbnail?.image || '';
+  const thumbnailAlt = metadata.thumbnail?.alt || '';
 
   return {
-    title: metadata.externalMeta.title,
+    title: metadata.title,
     summary: metadata.summary,
     url: relativeUrl,
-    date: metadata.externalMeta.publicationDate.toISOString().split('T')[0],
-    dateDisplay: metadata.externalMeta.publicationDate.toLocaleDateString('en-US', {
+    date: metadata.publicationDate.toISOString().split('T')[0],
+    dateDisplay: metadata.publicationDate.toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'

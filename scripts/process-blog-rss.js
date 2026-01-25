@@ -6,6 +6,8 @@ const { loadSiteConfig } = require('./site-config');
 const { makeAbsoluteUrl } = require('./url');
 const { generateRelativeBlogPostUrl } = require('./process-blog');
 
+const maxSummaryLength = 200;
+
 // Generate root XML document for RSS/Atom feeds
 function generateRootXMLDoc() {
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
@@ -25,13 +27,15 @@ function generateRootXMLDoc() {
     allPosts.sort((a, b) => b.metadata.publicationDate - a.metadata.publicationDate);
 
     allPosts.forEach((post) => {
-        const title = post.metadata.title || 'Untitled Post';
         const relativeUrl = `blog/${generateRelativeBlogPostUrl(post.filePath)}`;
         const link = makeAbsoluteUrl(siteConfig, relativeUrl);
-        const description = post.metadata.description || '';
+        let description = post.metadata.summary;
+        if (description.length > maxSummaryLength) {
+            description = description.slice(0, maxSummaryLength) + '...';
+        }
 
         xml += '    <item>\n';
-        xml += `      <title>${title}</title>\n`;
+        xml += `      <title>${post.metadata.title}</title>\n`;
         xml += `      <link>${link}</link>\n`;
         xml += `      <description>${description}</description>\n`;
         xml += `      <pubDate>${post.metadata.publicationDate.toISOString()}</pubDate>\n`;
