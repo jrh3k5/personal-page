@@ -7,6 +7,7 @@ const { marked } = require('marked');
 
 const loadBlogMetadata = require('./blog-metadata').loadBlogMetadata;
 const loadSiteConfig = require('./site-config').loadSiteConfig;
+const { makeAbsoluteUrl } = require('./url');
 
 /**
  * Generate table of contents from markdown content
@@ -167,22 +168,12 @@ function processBlogFile(filePath, outputDir, blogTemplate) {
   const ogType = externalMeta.og?.type || 'article';
   let ogImageMeta = '';
 
-  // Helper function to convert relative URLs to absolute
-  function makeAbsoluteUrl(relativeUrl) {
-    if (!relativeUrl) return relativeUrl;
-    if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) {
-      return relativeUrl;
-    }
-    const baseUrl = siteConfig.site?.base_url || '';
-    return baseUrl ? `${baseUrl}/${relativeUrl}` : relativeUrl;
-  }
-
   // Use OpenGraph image, or fall back to thumbnail image
   const ogImage = externalMeta.og?.image || externalMeta.thumbnail?.image;
   const ogImageAlt = externalMeta.og?.image_alt || externalMeta.thumbnail?.alt;
 
   if (ogImage) {
-    const absoluteOgImage = makeAbsoluteUrl(ogImage);
+    const absoluteOgImage = makeAbsoluteUrl(siteConfig, ogImage);
     ogImageMeta = `\n    <meta property="og:image" content="${absoluteOgImage}">`;
     if (ogImageAlt) {
       ogImageMeta += `\n    <meta property="og:image:alt" content="${ogImageAlt}">`;

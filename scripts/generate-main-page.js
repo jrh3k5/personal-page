@@ -6,6 +6,7 @@ const yaml = require('js-yaml');
 
 const loadBlogMetadata = require('./blog-metadata').loadBlogMetadata;
 const loadSiteConfig = require('./site-config').loadSiteConfig;
+const { makeAbsoluteUrl } = require('./url');
 
 /**
  * Load index page metadata
@@ -28,22 +29,12 @@ function loadIndexMetadata(templateFile) {
  * Generate social media meta tags
  */
 function generateSocialMetaTags(metadata, siteConfig) {
-  // Helper function to convert relative URLs to absolute
-  function makeAbsoluteUrl(relativeUrl) {
-    if (!relativeUrl) return relativeUrl;
-    if (relativeUrl.startsWith('http://') || relativeUrl.startsWith('https://')) {
-      return relativeUrl;
-    }
-    const baseUrl = siteConfig.site?.base_url || '';
-    return baseUrl ? `${baseUrl}/${relativeUrl}` : relativeUrl;
-  }
-
   const title = metadata.title || 'Personal Site';
   const description = metadata.description || '';
   const ogType = metadata.og?.type || 'website';
   const twitterCardType = metadata.twitter?.card || 'summary_large_image';
   const siteName = metadata.og?.site_name || title;
-  const ogUrl = metadata.og?.url || makeAbsoluteUrl('');
+  const ogUrl = metadata.og?.url || makeAbsoluteUrl(siteConfig, '');
 
   // Generate image meta tags
   const ogImage = metadata.og?.image || metadata.thumbnail?.image;
@@ -63,7 +54,7 @@ function generateSocialMetaTags(metadata, siteConfig) {
     <meta property="og:site_name" content="${siteName}">`;
 
   if (ogImage) {
-    const absoluteOgImage = makeAbsoluteUrl(ogImage);
+    const absoluteOgImage = makeAbsoluteUrl(siteConfig, ogImage);
     metaTags += `
     <meta property="og:image" content="${absoluteOgImage}">`;
     if (ogImageAlt) {
@@ -80,7 +71,7 @@ function generateSocialMetaTags(metadata, siteConfig) {
     <meta name="twitter:description" content="${description}">`;
 
   if (twitterImage) {
-    const absoluteTwitterImage = makeAbsoluteUrl(twitterImage);
+    const absoluteTwitterImage = makeAbsoluteUrl(siteConfig, twitterImage);
     metaTags += `
     <meta name="twitter:image" content="${absoluteTwitterImage}">`;
   }
