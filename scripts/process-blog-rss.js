@@ -29,7 +29,7 @@ function generateRootXMLDoc() {
     allPosts.forEach((post) => {
         const relativeUrl = `blog/${generateRelativeBlogPostUrl(post.filePath)}`;
         const link = makeAbsoluteUrl(siteConfig, relativeUrl);
-        let description = post.metadata.summary;
+        let description = post.metadata.summary.trim();
         if (description.length > maxSummaryLength) {
             description = description.slice(0, maxSummaryLength) + '...';
         }

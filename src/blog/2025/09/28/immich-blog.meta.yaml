@@ -1,4 +1,6 @@
 # Metadata for the Immich blog post
+summary: >
+  A walkthrough on how to set up Immich, a self-hosted photos application, on a Raspberry Pi.
 
 # Blog post thumbnail (used in index pages and social sharing)
 thumbnail:

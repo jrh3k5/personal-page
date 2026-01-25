@@ -92,42 +92,23 @@ function loadBlogMetadata(filePath) {
   const lines = blogContent.split('\n');
 
   let blogTitle;
-  let summary;
   for (const line of lines) {
     if (line.startsWith('#')) {
       if (!blogTitle && line.startsWith('# ')) {
         blogTitle = line.slice(2).trim();
-      }
-    } else if (!summary && line.trim()) {
-        // Clean up markdown formatting for summary
-        let cleanLine = line
-          .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')  // Remove links
-          .replace(/\*\*(.*?)\*\*/g, '$1')          // Remove bold
-          .replace(/\*(.*?)\*/g, '$1')              // Remove italic
-          .replace(/`([^`]+)`/g, '$1');             // Remove inline code
 
-        summary = cleanLine.trim().length > 200
-          ? cleanLine.trim().slice(0, 200) + '...'
-          : cleanLine.trim();
-      }
-
-      if (!summary && !blogTitle) {
-        // Stop reading the lines once we have both title and summary
         break;
       }
+    }
   }
 
   if (!blogTitle) {
     throw new Error('Unable to extract blog title from file: ' + filePath);
   }
 
-  if (!summary) {
-    throw new Error('Unable to extract blog summary from file: ' + filePath);
-  }
-
   return new BlogMetadata(
     blogTitle,
-    summary,
+    data.summary,
     publishedDate,
     thumbnailData,
     openGraphData,
