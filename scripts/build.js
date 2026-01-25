@@ -67,6 +67,12 @@ async function build() {
         ['scripts/process-blog.js', 'src/templates/blog-post.html.template', 'src/templates/blog-index.html.template', 'dist/'],
         'Processing blog content...'
       );
+
+      await runCommand(
+        'node',
+        ['scripts/process-blog-rss.js', 'dist/blog/rss.xml'],
+        'Generating blog RSS feed...'
+      );
     } else {
       console.log('No blog content found, skipping blog processing...');
     }
