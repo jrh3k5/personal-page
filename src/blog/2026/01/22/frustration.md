@@ -12,7 +12,7 @@ We aren't limited to these companies' solutions, however. We don't have to sign 
 
 The alternatives to the Googles and Apples of the world often lack the kind of funding and staffing that the big companies can bring to bear on product design and implementation. As a result, these competitor apps and services often have rough edges and lack features, both advanced and basic: I'm still waiting for my calendar app to implement the ability to clone a calendar event.
 
-The lack of basic features or the extra few clicks it takes to do some things are often enough to turn people away from these alternatives. I can't fault them; they're looking for the tool that gets the job done and gets the job done most efficiently. However, in seeking the tool that streamlines our processes the most and has absolutely every feature we want, we're not seeking out what is truly the best tool for the job. Exhaustiveness of features and slick desing are not the *only* priorities, nor necessarily even the *top* priorities, that should drive our selection processes.
+The lack of basic features or the extra few clicks it takes to do some things are often enough to turn people away from these alternatives. I can't fault them; they're looking for the tool that gets the job done and gets the job done most efficiently. However, in seeking the tool that streamlines our processes the most and has absolutely every feature we want, we're not seeking out what is truly the best tool for the job. Exhaustiveness of features and slick design are not the *only* priorities, nor necessarily even the *top* priorities, that should drive our selection processes.
 
 ### A Case Study in Gatekeepers
 
