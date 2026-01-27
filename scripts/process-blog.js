@@ -1,18 +1,17 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra');
-const path = require('path');
-const yaml = require('js-yaml');
-const { marked } = require('marked');
+import fs from 'fs-extra';
+import path from 'path';
+import { marked } from 'marked';
 
-const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
-const { loadSiteConfig } = require('./site-config');
-const { makeAbsoluteUrl } = require('./url');
+import { blogSourceDir, loadBlogMetadata } from './blog-metadata.js';
+import { loadSiteConfig } from './site-config.js';
+import { makeAbsoluteUrl } from './url.js';
 
 /**
  * Generates blog post URL from file path, relative to the blog/ directory of the site.
  */
-function generateRelativeBlogPostUrl(blogFilePath) {
+export function generateRelativeBlogPostUrl(blogFilePath) {
   const relPath = path.relative(blogSourceDir, blogFilePath);
   return relPath.replace('.md', '.html');
 }
@@ -222,25 +221,14 @@ function generateBlogIndex(posts, indexTemplate, outputPath) {
 /**
  * Main function
  */
-function main() {
-  if (process.argv.length !== 5) {
-    console.error('Usage: process-blog.js <blog-template.html> <index-template.html> <output-dir>');
-    process.exit(1);
-  }
-
-  const blogTemplatePath = process.argv[2];
-  const indexTemplatePath = process.argv[3];
-  const outputDir = process.argv[4];
-
+export function main(
+  blogTemplatePath,
+  indexTemplatePath,
+  outputDir,
+) {
   // Read templates
-  let blogTemplate, indexTemplate;
-  try {
-    blogTemplate = fs.readFileSync(blogTemplatePath, 'utf8');
-    indexTemplate = fs.readFileSync(indexTemplatePath, 'utf8');
-  } catch (error) {
-    console.error(`Template file not found: ${error.message}`);
-    process.exit(1);
-  }
+  const blogTemplate = fs.readFileSync(blogTemplatePath, 'utf8');
+  const indexTemplate = fs.readFileSync(indexTemplatePath, 'utf8');
 
   // Create output directory
   const blogOutputDir = path.join(outputDir, 'blog');
@@ -278,9 +266,3 @@ function main() {
     console.log('No blog posts found');
   }
 }
-
-if (require.main === module) {
-  main();
-}
-
-module.exports = { generateRelativeBlogPostUrl };

@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra');
-const path = require('path');
-const yaml = require('js-yaml');
+import fs from 'fs-extra';
+import path from 'path';
+import yaml from 'js-yaml';
 
-const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
-const { loadSiteConfig } = require('./site-config');
-const { makeAbsoluteUrl } = require('./url');
+import { blogSourceDir, loadBlogMetadata } from './blog-metadata.js';
+import { loadSiteConfig } from './site-config.js';
+import { makeAbsoluteUrl } from './url.js';
 
 /**
  * Load index page metadata
@@ -260,33 +260,16 @@ function generateRecentBlogsHtml(posts) {
 /**
  * Main function
  */
-function main() {
-  if (process.argv.length !== 5) {
-    console.error('Usage: generate-main-page.js <presentations.yaml> <template.html> <output.html>');
-    process.exit(1);
-  }
-
-  const yamlFile = process.argv[2];
-  const templateFile = process.argv[3];
-  const outputFile = process.argv[4];
-
+export function main(
+  yamlFile,
+  templateFile,
+  outputFile
+) {
   // Read YAML data
-  let yamlContent;
-  try {
-    yamlContent = fs.readFileSync(yamlFile, 'utf8');
-  } catch (error) {
-    console.error(`Error: YAML file '${yamlFile}' not found`);
-    process.exit(1);
-  }
+  const yamlContent = fs.readFileSync(yamlFile, 'utf8');
 
   // Read template
-  let template;
-  try {
-    template = fs.readFileSync(templateFile, 'utf8');
-  } catch (error) {
-    console.error(`Error: Template file '${templateFile}' not found`);
-    process.exit(1);
-  }
+  const template = fs.readFileSync(templateFile, 'utf8');
 
   // Load site configuration and metadata
   const siteConfig = loadSiteConfig();
@@ -312,15 +295,6 @@ function main() {
     .replace(/\{\{PAGE_TITLE\}\}/g, pageTitle);
 
   // Write output
-  try {
-    fs.writeFileSync(outputFile, outputHtml);
-    console.log(`Generated ${outputFile} successfully`);
-  } catch (error) {
-    console.error(`Error writing output file: ${error.message}`);
-    process.exit(1);
-  }
-}
-
-if (require.main === module) {
-  main();
+  fs.writeFileSync(outputFile, outputHtml);
+  console.log(`Generated ${outputFile} successfully`);
 }

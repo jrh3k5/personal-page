@@ -1,10 +1,10 @@
-const fs = require('fs-extra');
-const path = require('path');
+import fs from 'fs-extra';
+import path from 'path';
 
-const { blogSourceDir, loadBlogMetadata } = require('./blog-metadata');
-const { loadSiteConfig } = require('./site-config');
-const { makeAbsoluteUrl } = require('./url');
-const { generateRelativeBlogPostUrl } = require('./process-blog');
+import { blogSourceDir, loadBlogMetadata } from './blog-metadata.js';
+import { loadSiteConfig } from './site-config.js';
+import { makeAbsoluteUrl } from './url.js';
+import { generateRelativeBlogPostUrl } from './process-blog.js';
 
 const maxSummaryLength = 200;
 
@@ -73,18 +73,9 @@ function loadDirectoryBlogPosts(dir) {
   return posts;
 }
 
-function main() {
-  if (process.argv.length !== 3) {
-    console.error('Usage: process-blog-rss.js <output.xml>');
-    process.exit(1);
-  }
-
+export function main(
+  outputFile,
+) {
   const xmlContent = generateRootXMLDoc();
-
-  const outputFile = process.argv[2];
   fs.writeFileSync(outputFile, xmlContent, 'utf8');
-}
-
-if (require.main === module) {
-  main();
 }
