@@ -1,31 +1,12 @@
 #!/usr/bin/env node
 
-const fs = require('fs-extra');
-const path = require('path');
-const { spawn } = require('child_process');
-const { blogSourceDir } = require('./blog-metadata');
+import fs from 'fs-extra';
+import path from 'path';
+import { blogSourceDir } from './blog-metadata.js';
 
-/**
- * Run a command and return a promise
- */
-function runCommand(command, args, description) {
-  return new Promise((resolve, reject) => {
-    console.log(description);
-    const child = spawn(command, args, { stdio: 'inherit' });
-
-    child.on('close', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`Command failed with exit code ${code}`));
-      }
-    });
-
-    child.on('error', (error) => {
-      reject(error);
-    });
-  });
-}
+import { main as mainPageMain } from './generate-main-page.js';
+import { main as processBlogMain } from './process-blog.js';
+import { main as processBlogRSSMain } from './process-blog-rss.js';
 
 /**
  * Copy static files from src/static to dist
@@ -55,25 +36,21 @@ async function build() {
     fs.ensureDirSync('dist');
 
     // Generate index.html from template and presentations data
-    await runCommand(
-      'node',
-      ['scripts/generate-main-page.js', 'src/templates/presentations.yaml', 'src/templates/index.html.template', 'dist/index.html'],
-      'Generating index.html from template...'
-    );
+    mainPageMain(
+      'src/templates/presentations.yaml',
+      'src/templates/index.html.template',
+      'dist/index.html'
+    )
 
     // Process blog content if it exists
     if (fs.existsSync(blogSourceDir) && fs.readdirSync(blogSourceDir).some(file => file.endsWith('.md') || fs.statSync(path.join(blogSourceDir, file)).isDirectory())) {
-      await runCommand(
-        'node',
-        ['scripts/process-blog.js', 'src/templates/blog-post.html.template', 'src/templates/blog-index.html.template', 'dist/'],
-        'Processing blog content...'
+      processBlogMain(
+        'src/templates/blog-post.html.template',
+        'src/templates/blog-index.html.template',
+        'dist/',
       );
 
-      await runCommand(
-        'node',
-        ['scripts/process-blog-rss.js', 'dist/blog/rss.xml'],
-        'Generating blog RSS feed...'
-      );
+      processBlogRSSMain('dist/blog/rss.xml');
     } else {
       console.log('No blog content found, skipping blog processing...');
     }
@@ -107,8 +84,8 @@ function checkDependencies() {
   }
 }
 
-// Run the build
-if (require.main === module) {
-  checkDependencies();
-  build();
-}
+/*
+ * entrypoint
+ */
+checkDependencies();
+build();

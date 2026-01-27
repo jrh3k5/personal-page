@@ -1,11 +1,11 @@
-const fs = require('fs-extra');
-const path = require('path');
-const yaml = require('js-yaml');
+import fs from 'fs-extra';
+import path from 'path';
+import yaml from 'js-yaml';
 
 /**
  * Load site configuration
  */
-function loadSiteConfig() {
+export function loadSiteConfig() {
   const configPath = path.join(__dirname, '..', 'src', 'config.yml');
 
   if (fs.existsSync(configPath)) {
@@ -15,5 +15,3 @@ function loadSiteConfig() {
 
   return {};
 }
-
-module.exports = { loadSiteConfig };

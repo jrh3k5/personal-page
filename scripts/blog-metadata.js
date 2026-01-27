@@ -1,10 +1,10 @@
-const fs = require('fs-extra');
-const path = require('path');
-const yaml = require('js-yaml');
+import fs from 'fs-extra';
+import path from 'path';
+import yaml from 'js-yaml';
 
-const blogSourceDir = './src/blog/';
+export const blogSourceDir = './src/blog/';
 
-class BlogMetadata {
+export class BlogMetadata {
   constructor(
     title,
     summary,
@@ -23,20 +23,20 @@ class BlogMetadata {
   }
 }
 
-class BlogThumbnail {
+export class BlogThumbnail {
   constructor(image, alt) {
     this.image = image;
     this.alt = alt;
   }
 }
 
-class BlogOpenGraph {
+export class BlogOpenGraph {
   constructor(image) {
     this.image = image;
   }
 }
 
-class BlogSEO {
+export class BlogSEO {
   constructor(keywords) {
     this.keywords = keywords;
   }
@@ -45,7 +45,7 @@ class BlogSEO {
 /**
  * Load metadata from a .meta.yaml file if it exists
  */
-function loadBlogMetadata(filePath) {
+export function loadBlogMetadata(filePath) {
   const basePath = path.parse(filePath).dir + '/' + path.parse(filePath).name;
   const metaPath = `${basePath}.meta.yaml`;
 
@@ -136,12 +136,3 @@ function loadBlogMetadata(filePath) {
     seoData,
   );
 }
-
-module.exports = { 
-  BlogMetadata,
-  BlogThumbnail,
-  BlogOpenGraph,
-  BlogSEO,
-  blogSourceDir, 
-  loadBlogMetadata,
- };
