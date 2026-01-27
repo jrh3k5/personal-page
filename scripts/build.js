@@ -61,31 +61,12 @@ async function build() {
     console.log('Build completed successfully! Output is in ./dist/');
 
   } catch (error) {
-    console.error('Build failed:', error.message);
+    console.error('Build failed:', error);
     process.exit(1);
-  }
-}
-
-/**
- * Check if dependencies are installed
- */
-function checkDependencies() {
-  const packageJson = JSON.parse(fs.readFileSync('package.json', 'utf8'));
-  const dependencies = Object.keys(packageJson.dependencies || {});
-
-  for (const dep of dependencies) {
-    try {
-      require.resolve(dep);
-    } catch (error) {
-      console.error(`Missing dependency: ${dep}`);
-      console.error('Please run: npm install');
-      process.exit(1);
-    }
   }
 }
 
 /*
  * entrypoint
  */
-checkDependencies();
 build();

@@ -6,7 +6,7 @@ import yaml from 'js-yaml';
  * Load site configuration
  */
 export function loadSiteConfig() {
-  const configPath = path.join(__dirname, '..', 'src', 'config.yml');
+  const configPath = path.join('src', 'config.yml');
 
   if (fs.existsSync(configPath)) {
     const content = fs.readFileSync(configPath, 'utf8');
