@@ -35,6 +35,7 @@ function generateRootXMLDoc() {
         }
 
         xml += '    <item>\n';
+        xml += `      <guid isPermaLink="true">${link}</guid>\n`;
         xml += `      <title>${post.metadata.title}</title>\n`;
         xml += `      <link>${link}</link>\n`;
         xml += `      <description>${description}</description>\n`;
