@@ -1,3 +1,5 @@
+# This project has been [migrated to Codeberg](https://codeberg.org/jrh3k5/personal-page/)
+
 # Personal Page
 
 A simple static website showcasing presentations and providing links to social profiles. The site features presentations on privacy, decentralization, and "hacker tools" for non-technical audiences.
